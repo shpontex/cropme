@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="croppie.css">
+    <link rel="stylesheet" href="cropme.css">
+    <title>Document</title>
+    <style>
+        .croppie {
+            width: 300;
+            height: 300
+        }
+    </style>
+</head>
+
+<body>
+    <div class="croppie">
+        <div id="croppie"></div>
+    </div>
+    <div id="cropme"></div>
+    <div class="test"></div>
+    <script src="croppie.js"></script>
+    <script src="cropme.js"></script>
+    <script>
+        let el = document.getElementById('cropme')
+        const cropme = new Cropme(el, {
+            viewport: {
+                width: 300,
+                height: 300
+            }
+        })
+        cropme.bind({
+            url: 'naruto.png'
+        })
+        console.log(cropme);
+
+        // let element = document.getElementById('croppie')
+        // const croppie = new Croppie(element,{
+        //     boundary: { width: 300, height: 300 },
+        // })
+        // croppie.bind({
+        //     url: 'naruto.png'
+        // })
+        // console.log(croppie);
+    </script>
+</body>
+
+</html>
