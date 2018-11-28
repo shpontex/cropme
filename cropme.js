@@ -97,8 +97,8 @@
       y = 0,
       movex = 0,
       movey = 0
+     self = this
     this.scale = 1
-    let self = this
 
 
     preview.addEventListener('mousedown', function (e) {
@@ -114,23 +114,14 @@
       let previewData = preview.getBoundingClientRect()
       let boundaryData = boundary.getBoundingClientRect()
 
-      if (previewData.x > boundaryData.x) {
-        movex = -950
-      } else {
-        movex = e.pageX - x
-      }
+      if (previewData.x > boundaryData.x) {} else {}
       if (previewData.y > boundaryData.y) {} else {
 
       }
-      console.log(previewData.x > boundaryData.x);
-      
+
+      movex = e.pageX - x
       movey = e.pageY - y
 
-      // console.log(boundaryData,previewData)
-      // console.log(previewData.x , boundaryData.x + 2);
-
-      console.log(movex);
-      
       preview.style.transform = transform(movex, movey, self.scale)
 
     }
@@ -150,19 +141,25 @@
 
   }
 
-  function createCanvas() {
+  function createCanvas(options) {
     let canvas = document.createElement('canvas'),
       ctx = canvas.getContext('2d');
 
-    let viewportData = this.preview.getBoundingClientRect()
+    let previewData = this.preview.getBoundingClientRect()
     let boundaryData = this.boundary.getBoundingClientRect()
 
-    canvas.width = this.boundary.width
-    canvas.height = this.boundary.height
-    let x = viewportData.x - boundaryData.x - 2
-    let y = viewportData.y - boundaryData.y - 2
+    let width = options.size && options.size.width ? options.size.width : this.options.boundary.width
+    let height = options.size && options.size.height ? options.size.height : this.options.boundary.height
+    let xs = width  / this.boundary.width
+    let ys = height / this.boundary.height
 
-    ctx.drawImage(this.preview, x, y, viewportData.width, viewportData.height)
+    canvas.width = width
+    canvas.height = height
+    
+    let x = xs * (previewData.x - boundaryData.x - 2)
+    let y = ys * (previewData.y - boundaryData.y - 2)
+
+    ctx.drawImage(this.preview, x, y, previewData.width * xs, previewData.height * ys)
     if (this.options.viewport.type === 'circle') {
       ctx.globalCompositeOperation = 'destination-in'
       ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2, 0, Math.PI * 2, true)
@@ -190,23 +187,20 @@
       this.preview.src = obj.url
       let self = this
       this.preview.onload = function () {
-        let viewportData = self.preview.getBoundingClientRect()
+        let previewData = self.preview.getBoundingClientRect()
         let containerData = self.container.getBoundingClientRect()
-        let scale = containerData.height / viewportData.height
-        let cx = containerData.width / 2 - viewportData.width / 2
-        let cy = containerData.height / 2 - viewportData.height / 2
+        let scale = containerData.height / previewData.height
+        let cx = containerData.width / 2 - previewData.width / 2
+        let cy = containerData.height / 2 - previewData.height / 2
         self.preview.style.transform = transform(cx, cy, scale)
         self.x = cx
         self.y = cy
         self.scale = scale
       }
     }
-    export (type, cb) {
-      let canvas = createCanvas.call(this)
-      if (typeof type === 'function') {
-        cb = type
-      }
-      return type == 'blob' ? canvas.toBlob(blob => cb(URL.createObjectURL(blob))) : cb(canvas.toDataURL())
+    export (options, cb) {
+      let canvas = createCanvas.call(this,options)
+      return options.type == 'blob' ? canvas.toBlob(blob => cb(URL.createObjectURL(blob))) : cb(canvas.toDataURL())
     }
   }
 

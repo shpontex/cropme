@@ -19,8 +19,8 @@
 <body>
     <div id="cropme"></div>
     <button id="crop">Crop me</button>
-    <img id="img" src="" alt="">
-    
+    <img style="width:150px" id="img" src="" alt="">
+
     <script src="croppie.js"></script>
     <script src="cropme.js"></script>
     <script>
@@ -39,14 +39,20 @@
         cropme.bind({
             // url: 'owndays.png'
             // url: 'simpson.png'
-            url: 'pic.jpeg'
+            // url: 'pic.jpeg'
             // url: 'guitar.jpg'
             // url: 'guitar.jpeg'
+            url: 'bleach.jpg'
         })
-        document.getElementById('crop').addEventListener('click',function(){
+        document.getElementById('crop').addEventListener('click', function () {
             let el = document.getElementById('img')
-            cropme.export(function(url){
-               el.src =  url
+            cropme.export({
+                size: {
+                    width: 800,
+                    height: 800
+                }
+            }, function (url) {
+                el.src = url
             })
         })
     </script>
