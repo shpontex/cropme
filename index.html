@@ -20,7 +20,7 @@
     <div id="cropme"></div>
     <button id="crop">Crop me</button>
     <img style="width:150px" id="img" src="" alt="">
-
+    
     <script src="croppie.js"></script>
     <script src="cropme.js"></script>
     <script>
@@ -44,15 +44,15 @@
             // url: 'guitar.jpeg'
             url: 'bleach.jpg'
         })
-        document.getElementById('crop').addEventListener('click', function () {
+        document.getElementById('crop').addEventListener('click',function(){
             let el = document.getElementById('img')
             cropme.export({
                 size: {
-                    width: 800,
+                    width:800,
                     height: 800
                 }
-            }, function (url) {
-                el.src = url
+            },function(url){
+               el.src =  url
             })
         })
     </script>

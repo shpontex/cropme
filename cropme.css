@@ -2,6 +2,9 @@
     position: relative;
     overflow: hidden;
 }
+.cropme-container img {
+    cursor: move;
+}
 .boundary {
     position: absolute;
     border: 2px solid #fff;
