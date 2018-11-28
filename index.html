@@ -17,11 +17,10 @@
 </head>
 
 <body>
-    <div class="croppie">
-        <div id="croppie"></div>
-    </div>
     <div id="cropme"></div>
-    <div class="test"></div>
+    <button id="crop">Crop me</button>
+    <img id="img" src="" alt="">
+    
     <script src="croppie.js"></script>
     <script src="cropme.js"></script>
     <script>
@@ -29,22 +28,27 @@
         const cropme = new Cropme(el, {
             viewport: {
                 width: 300,
-                height: 300
-            }
+                height: 300,
+                type: 'circle',
+            },
+            boundary: {
+                width: 150,
+                height: 150
+            },
         })
         cropme.bind({
-            url: 'naruto.png'
+            // url: 'owndays.png'
+            // url: 'simpson.png'
+            url: 'pic.jpeg'
+            // url: 'guitar.jpg'
+            // url: 'guitar.jpeg'
         })
-        console.log(cropme);
-
-        // let element = document.getElementById('croppie')
-        // const croppie = new Croppie(element,{
-        //     boundary: { width: 300, height: 300 },
-        // })
-        // croppie.bind({
-        //     url: 'naruto.png'
-        // })
-        // console.log(croppie);
+        document.getElementById('crop').addEventListener('click',function(){
+            let el = document.getElementById('img')
+            cropme.export(function(url){
+               el.src =  url
+            })
+        })
     </script>
 </body>
 
