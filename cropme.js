@@ -68,48 +68,80 @@
     }])
   });
 
+  if (window.jQuery) {
+    jQuery.fn.cropme = function (options, obj) {
+      if (typeof options === 'string') {
+
+        let cropme = this.data('cropme')
+
+        if (options === 'position') {
+          return cropme.position()
+        }
+        if (options === 'bind') {
+          return cropme.bind(obj)
+        }
+        if (options === 'export') {
+          return cropme.export(obj)
+        }
+        if (options === 'rotate') {
+          return cropme.rotate(obj)
+        }
+        if (options === 'destroy') {
+          return cropme.destroy()
+        }
+
+      } else {
+
+        return this.each(function () {
+          var cropme = new Cropme(this, options)
+          $(this).data('cropme', cropme)
+        });
+
+      }
+    }
+  }
+
   function transform(self) {
-    return 'translate(' + self.x + 'px,' + self.y + 'px) scale(' + self.scale + ') rotate(' + self.deg + 'deg)'
+    return 'translate(' + self.properties.x + 'px,' + self.properties.y + 'px) scale(' + self.properties.scale + ') rotate(' + self.properties.deg + 'deg)'
   }
 
   function createContext() {
-    const container = this.container = document.createElement('div')
-    container.classList.add('cropme-container')
-    container.style.width = this.options.container.width + 'px'
-    container.style.height = this.options.container.height + 'px'
-    const image = this.image = document.createElement('img')
+    this.properties.container.classList.add('cropme-container')
+    this.properties.container.style.width = this.properties.options.container.width + 'px'
+    this.properties.container.style.height = this.properties.options.container.height + 'px'
+    const image = this.properties.image = document.createElement('img')
+    
     image.ondragstart = () => false
-    const boundary = this.boundary = document.createElement('div')
-    boundary.width = this.options.boundary.width || 100
-    boundary.height = this.options.boundary.height || 100
+    const boundary = this.properties.boundary = document.createElement('div')
+    boundary.width = this.properties.options.boundary.width || 100
+    boundary.height = this.properties.options.boundary.height || 100
     boundary.style.width = boundary.width + 'px'
     boundary.style.height = boundary.height + 'px'
     boundary.className = 'boundary'
-    if (this.options.boundary.type === 'circle') {
+    if (this.properties.options.boundary.type === 'circle') {
       boundary.className = 'boundary circle'
     }
 
-    this.el.appendChild(container)
-    container.appendChild(image)
-    container.appendChild(boundary)
+    this.properties.container.appendChild(image)
+    this.properties.container.appendChild(boundary)
 
     let x, movex = 0,
       y, movey = 0,
       self = this
-    this.scale = 1
+    this.properties.scale = 1
 
     let mousemove = function (e) {
-      self.x = e.pageX - x
-      self.y = e.pageY - y
+      self.properties.x = e.pageX - x
+      self.properties.y = e.pageY - y
       image.style.transform = transform(self)
     }
 
     image.addEventListener('mousedown', function (e) {
-      movex = self.x || movex
-      movey = self.y || movey
+      movex = self.properties.x || movex
+      movey = self.properties.y || movey
       x = e.pageX - movex
       y = e.pageY - movey
-      self.x = self.y = null
+      self.properties.x = self.properties.y = null
       window.addEventListener('mousemove', mousemove)
     })
 
@@ -117,9 +149,9 @@
       window.removeEventListener('mousemove', mousemove);
     })
 
-    container.addEventListener('mousewheel', function (e) {
+    this.properties.container.addEventListener('mousewheel', function (e) {
       e.preventDefault()
-      self.scale = self.scale + (e.wheelDelta / 1200 * self.scale)
+      self.properties.scale = self.properties.scale + (e.wheelDelta / 1200 * self.properties.scale)
       image.style.transform = transform(self)
     })
 
@@ -129,47 +161,57 @@
     let canvas = document.createElement('canvas'),
       ctx = canvas.getContext('2d');
 
-    let width = options.size && options.size.width ? options.size.width : this.options.boundary.width
-    let height = options.size && options.size.height ? options.size.height : this.options.boundary.height
-    let xs = width / this.boundary.width
-    let ys = height / this.boundary.height
+    let width = this.properties.options.boundary.width
+    let height = this.properties.options.boundary.height
+
+    if (typeof options === 'object') {
+      if (options.size && options.size.width) {
+        width = options.size.width
+      }
+      if (options.size && options.size.height) {
+        height = options.size.height
+      }
+    }
+    let xs = width / this.properties.boundary.width
+    let ys = height / this.properties.boundary.height
 
     canvas.width = width
     canvas.height = height
 
-    let deg = this.deg
-    let nx = this.x
-    let ny = this.y
-    if(deg !== 0){
-      this.deg = 0
-      this.x = this.ox
-      this.y = this.oy
-      this.image.style.transform = transform(this)
+    let deg = this.properties.deg
+    let nx = this.properties.x
+    let ny = this.properties.y
+    if (deg !== 0) {
+      this.properties.deg = 0
+      this.properties.x = this.properties.ox
+      this.properties.y = this.properties.oy
+      this.properties.image.style.transform = transform(this)
     }
-    
 
-    let imageData = this.image.getBoundingClientRect()
-    let boundaryData = this.boundary.getBoundingClientRect()
+
+
+    let imageData = this.properties.image.getBoundingClientRect()
+    let boundaryData = this.properties.boundary.getBoundingClientRect()
     let x = xs * (imageData.x - boundaryData.x - 2)
     let y = ys * (imageData.y - boundaryData.y - 2)
     if (deg !== 0) {
-      ctx.translate(nx - this.x,ny - this.y)
+      ctx.translate(nx - this.properties.x, ny - this.properties.y)
       ctx.translate(width / 2, height / 2);
       ctx.rotate(deg * Math.PI / 180);
       ctx.translate(-width / 2, -height / 2);
-      this.deg = deg
-      this.x = nx
-      this.y = ny
-      this.image.style.transform = transform(this)
+      this.properties.deg = deg
+      this.properties.x = nx
+      this.properties.y = ny
+      this.properties.image.style.transform = transform(this)
     }
 
-    ctx.drawImage(this.image, x, y, imageData.width * xs, imageData.height * ys)
-    if (this.options.boundary.type === 'circle') {
+    ctx.drawImage(this.properties.image, x, y, imageData.width * xs, imageData.height * ys)
+    if (this.properties.options.boundary.type === 'circle') {
       ctx.globalCompositeOperation = 'destination-in'
       ctx.arc(width / 2, height / 2, width / 2, 0, Math.PI * 2)
       ctx.fill();
     }
-    if (this.options.boundary.type === 'triangle') {
+    if (this.properties.options.boundary.type === 'triangle') {
       ctx.beginPath();
       ctx.globalCompositeOperation = 'destination-in'
       ctx.moveTo(canvas.width / 2, 0);
@@ -183,20 +225,21 @@
   }
   class Cropme {
     constructor(el, options) {
-      this.el = el
-      this.options = nestedObjectAssign(defaultOptions, options)
+      this.properties = {}
+      this.properties.container = el
+      this.properties.options = nestedObjectAssign(defaultOptions, options)
       createContext.call(this)
     }
     bind(obj) {
-      this.image.src = obj.url
+      this.properties.image.src = obj.url
       let self = this
-      this.image.onload = function () {
-        let imageData = self.image.getBoundingClientRect()
-        let containerData = self.container.getBoundingClientRect()
+      this.properties.image.onload = function () {
+        let imageData = self.properties.image.getBoundingClientRect()
+        let containerData = self.properties.container.getBoundingClientRect()
         let cx = (containerData.width - imageData.width) / 2
         let cy = (containerData.height - imageData.height) / 2
-        self.ox = cx
-        self.oy = cy
+        self.properties.ox = cx
+        self.properties.oy = cy
 
         if (typeof obj.position == 'object') {
           cx = obj.position.x || cx
@@ -204,42 +247,50 @@
         }
 
         let scale = obj.scale ? obj.scale : containerData.height / imageData.height
-        self.x = cx
-        self.y  = cy
-        self.scale = scale
-        self.deg = obj.deg || 0
-        self.image.style.transform = transform(self)
-        self.image.style.opacity = 1
+        self.properties.x = cx
+        self.properties.y = cy
+        self.properties.scale = scale
+        self.properties.deg = obj.deg || 0
+        self.properties.image.style.transform = transform(self)
+        self.properties.image.style.opacity = 1
 
       }
     }
     rotate(deg) {
-      this.deg = deg
-      this.image.style.transform = transform(this)
+      this.properties.deg = deg
+      this.properties.image.style.transform = transform(this)
     }
-    export (options = {}) {
+    export (options) {
       let canvas = createCanvas.call(this, options)
+      options = typeof options === 'object' ? options.type : options
       return new Promise((resolve) => {
-        options.type === 'blob' ? canvas.toBlob(blob => resolve(URL.createObjectURL(blob))) : resolve(canvas.toDataURL())
+        options === 'blob' ? canvas.toBlob(blob => resolve(URL.createObjectURL(blob))) : resolve(canvas.toDataURL())
       })
     }
     position() {
       return {
-        x: this.x,
-        y: this.y,
-        scale: this.scale,
-        deg: parseInt(this.deg)
+        x: this.properties.x,
+        y: this.properties.y,
+        scale: this.properties.scale,
+        deg: parseInt(this.properties.deg)
       }
+    }
+    destroy() {
+      this.properties.container.innerHTML = ''
+      this.properties.container.className = this.properties.container.className.replace('cropme-container', '');
+      delete this.properties
     }
   }
 
   const defaultOptions = {
     container: {
-      width: 100,
-      height: 100,
+      width: 300,
+      height: 300,
 
     },
     boundary: {
+      width: 100,
+      height: 100,
       type: 'square'
     },
   }
