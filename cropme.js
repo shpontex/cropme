@@ -97,8 +97,6 @@
       y, movey = 0,
       self = this
     this.scale = 1
-    this.deg = 0
-
 
     let mousemove = function (e) {
       self.x = e.pageX - x
@@ -209,6 +207,7 @@
         self.x = cx
         self.y  = cy
         self.scale = scale
+        self.deg = obj.deg || 0
         self.image.style.transform = transform(self)
         self.image.style.opacity = 1
 
@@ -228,7 +227,8 @@
       return {
         x: this.x,
         y: this.y,
-        scale: this.scale
+        scale: this.scale,
+        deg: parseInt(this.deg)
       }
     }
   }

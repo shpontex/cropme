@@ -39,15 +39,16 @@
             },
         })
         cropme.bind({
-            // url: 'owndays.png',
-            position: {
-                // x: -955,
-                // y: -614
-            },
-            // scale: 1.8
+            url: 'owndays.png',
+            // position: {
+            //     x: 40,
+            //     y: 116
+            // },
+            // scale: 0.5,
+            // deg: 124
 
             // url: 'simpson.png'
-            url: 'pic.jpeg'
+            // url: 'pic.jpeg'
             // url: 'guitar.jpg'
             // url: 'guitar.jpeg'
             // url: 'bleach.jpg'
@@ -58,7 +59,7 @@
             cropme.export().then(url => {
                 el.src = url
             })
-            // console.log(cropme.position());
+            console.log(cropme.position());
         })
         document.getElementById('range').addEventListener('input', function (e) {
             
