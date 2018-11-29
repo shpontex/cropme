@@ -17,8 +17,10 @@
 </head>
 
 <body>
+    <input id="range" type="range" min="-180" max='180' value="0">
     <div id="cropme"></div>
     <button id="crop">Crop me</button>
+    <button id="reset">reset</button>
     <img style="width:150px" id="img" src="" alt="">
 
     <script src="croppie.js"></script>
@@ -33,15 +35,15 @@
             boundary: {
                 width: 150,
                 height: 150,
-                type: 'circle'
+                // type: 'circle'
             },
         })
         cropme.bind({
             // url: 'owndays.png',
-            // position: {
-            //     x: 118,
-            //     y: -16
-            // },
+            position: {
+                x: -955,
+                y: -614
+            },
             // scale: 1.8
 
             // url: 'simpson.png'
@@ -56,7 +58,13 @@
             cropme.export().then(url => {
                 el.src = url
             })
-            console.log(cropme.position());
+            // console.log(cropme.position());
+        })
+        document.getElementById('range').addEventListener('input', function (e) {
+            cropme.rotate(e.target.value)
+        })
+        document.getElementById('reset').addEventListener('click', function (e) {
+            cropme.rotate(0)
         })
     </script>
 </body>
