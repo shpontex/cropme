@@ -254,6 +254,10 @@
     this.properties.container.style.width = this.properties.options.container.width + 'px'
     this.properties.container.style.height = this.properties.options.container.height + 'px'
     const image = this.properties.image = document.createElement('img')
+    this.properties.scale = 1
+    const zoom = this.properties.zoom = document.createElement('input')
+        zoom.value = this.properties.scale
+        zoom.type = 'range'
 
     image.ondragstart = () => false
     const boundary = this.properties.boundary = document.createElement('div')
@@ -268,21 +272,18 @@
 
     this.properties.container.appendChild(image)
     this.properties.container.appendChild(boundary)
+    this.properties.container.appendChild(zoom)
 
     let x, movex = 0,
       y, movey = 0,
       self = this
-    this.properties.scale = 1
 
     let mousemove = function (e) {
       self.properties.x = e.pageX - x
       self.properties.y = e.pageY - y
       image.style.transform = transform(self)
     }
-
     image.addEventListener('mousedown', function (e) {
-      console.log(self.properties.x, movex);
-
       movex = self.properties.x || movex
       movey = self.properties.y || movey
       x = e.pageX - movex
