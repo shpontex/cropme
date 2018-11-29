@@ -4,6 +4,7 @@
 }
 .cropme-container img {
     cursor: move;
+    opacity: 0
 }
 .boundary {
     position: absolute;
