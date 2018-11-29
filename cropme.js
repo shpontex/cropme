@@ -68,40 +68,39 @@
     }])
   });
 
-  function transform(x, y, scale) {
-    return 'translate(' + x + 'px,' + y + 'px) scale(' + scale + ')'
+  function transform(self) {
+    return 'translate(' + self.x + 'px,' + self.y + 'px) scale(' + self.scale + ')'
   }
 
   function createContext() {
     const container = this.container = document.createElement('div')
     container.classList.add('cropme-container')
-    container.style.width = this.options.viewport.width + 'px'
-    container.style.height = this.options.viewport.height + 'px'
-    const preview = this.preview = document.createElement('img')
+    container.style.width = this.options.container.width + 'px'
+    container.style.height = this.options.container.height + 'px'
+    const image = this.image = document.createElement('img')
     const boundary = this.boundary = document.createElement('div')
-
     boundary.width = this.options.boundary.width || 100
     boundary.height = this.options.boundary.height || 100
     boundary.style.width = boundary.width + 'px'
     boundary.style.height = boundary.height + 'px'
     boundary.className = 'boundary'
-    if (this.options.viewport.type === 'circle') {
+    if (this.options.boundary.type === 'circle') {
       boundary.className = 'boundary circle'
     }
 
     this.el.appendChild(container)
-    container.appendChild(preview)
+    container.appendChild(image)
     container.appendChild(boundary)
-    preview.ondragstart = () => false
+    image.ondragstart = () => false
     let x = 0,
       y = 0,
       movex = 0,
       movey = 0
-     self = this
+    self = this
     this.scale = 1
 
 
-    preview.addEventListener('mousedown', function (e) {
+    image.addEventListener('mousedown', function (e) {
       movex = self.x || movex
       movey = self.y || movey
       x = e.pageX - movex
@@ -111,18 +110,18 @@
 
     })
     let mousemove = function (e) {
-      let previewData = preview.getBoundingClientRect()
+      let imageData = image.getBoundingClientRect()
       let boundaryData = boundary.getBoundingClientRect()
 
-      if (previewData.x > boundaryData.x) {} else {}
-      if (previewData.y > boundaryData.y) {} else {
+      if (imageData.x > boundaryData.x) {} else {}
+      if (imageData.y > boundaryData.y) {} else {
 
       }
 
-      movex = e.pageX - x
-      movey = e.pageY - y
+      self.x = e.pageX - x
+      self.y = e.pageY - y
 
-      preview.style.transform = transform(movex, movey, self.scale)
+      image.style.transform = transform(self)
 
     }
     document.addEventListener('mouseup', function (e) {
@@ -132,10 +131,7 @@
       e.preventDefault()
 
       self.scale = self.scale + (e.wheelDelta / 1200 * self.scale)
-
-      movex = self.x || movex
-      movey = self.y || movey
-      preview.style.transform = transform(movex, movey, self.scale)
+      image.style.transform = transform(self)
 
     })
 
@@ -145,27 +141,27 @@
     let canvas = document.createElement('canvas'),
       ctx = canvas.getContext('2d');
 
-    let previewData = this.preview.getBoundingClientRect()
+    let imageData = this.image.getBoundingClientRect()
     let boundaryData = this.boundary.getBoundingClientRect()
 
     let width = options.size && options.size.width ? options.size.width : this.options.boundary.width
     let height = options.size && options.size.height ? options.size.height : this.options.boundary.height
-    let xs = width  / this.boundary.width
+    let xs = width / this.boundary.width
     let ys = height / this.boundary.height
 
     canvas.width = width
     canvas.height = height
-    
-    let x = xs * (previewData.x - boundaryData.x - 2)
-    let y = ys * (previewData.y - boundaryData.y - 2)
 
-    ctx.drawImage(this.preview, x, y, previewData.width * xs, previewData.height * ys)
-    if (this.options.viewport.type === 'circle') {
+    let x = xs * (imageData.x - boundaryData.x - 2)
+    let y = ys * (imageData.y - boundaryData.y - 2)
+
+    ctx.drawImage(this.image, x, y, imageData.width * xs, imageData.height * ys)
+    if (this.options.boundary.type === 'circle') {
       ctx.globalCompositeOperation = 'destination-in'
       ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2, 0, Math.PI * 2, true)
       ctx.fill();
     }
-    if (this.options.viewport.type === 'triangle') {
+    if (this.options.boundary.type === 'triangle') {
       ctx.beginPath();
       ctx.globalCompositeOperation = 'destination-in'
       ctx.moveTo(canvas.width / 2, 0);
@@ -184,33 +180,53 @@
       createContext.call(this)
     }
     bind(obj) {
-      this.preview.src = obj.url
+      this.image.src = obj.url
       let self = this
-      this.preview.onload = function () {
-        let previewData = self.preview.getBoundingClientRect()
+      this.image.onload = function () {
+        let imageData = self.image.getBoundingClientRect()
         let containerData = self.container.getBoundingClientRect()
-        let scale = containerData.height / previewData.height
-        let cx = containerData.width / 2 - previewData.width / 2
-        let cy = containerData.height / 2 - previewData.height / 2
-        self.preview.style.transform = transform(cx, cy, scale)
+        let cx = containerData.width / 2 - imageData.width / 2
+        let cy = containerData.height / 2 - imageData.height / 2
+
+        if (typeof obj.position == 'object') {
+          cx = obj.position.x
+          cy = obj.position.y
+        }
+
+        let scale = obj.scale ? obj.scale : containerData.height / imageData.height
         self.x = cx
         self.y = cy
         self.scale = scale
+        self.image.style.transform = transform(self)
+        self.image.style.opacity = 1
+
       }
     }
-    export (options, cb) {
-      let canvas = createCanvas.call(this,options)
-      return options.type == 'blob' ? canvas.toBlob(blob => cb(URL.createObjectURL(blob))) : cb(canvas.toDataURL())
+    export (options = {}) {
+      let canvas = createCanvas.call(this, options)
+      return new Promise((resolve) => {
+        options.type === 'blob' ? canvas.toBlob(blob => resolve(URL.createObjectURL(blob))) : resolve(canvas.toDataURL())
+      })
+
+    }
+    position() {
+      return {
+        x: this.x,
+        y: this.y,
+        scale: this.scale
+      }
     }
   }
 
   const defaultOptions = {
-    viewport: {
+    container: {
       width: 100,
       height: 100,
+
+    },
+    boundary: {
       type: 'square'
     },
-    boundary: {},
   }
   global.Cropme = Cropme
 })(window)

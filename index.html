@@ -20,40 +20,43 @@
     <div id="cropme"></div>
     <button id="crop">Crop me</button>
     <img style="width:150px" id="img" src="" alt="">
-    
+
     <script src="croppie.js"></script>
     <script src="cropme.js"></script>
     <script>
         let el = document.getElementById('cropme')
         const cropme = new Cropme(el, {
-            viewport: {
+            container: {
                 width: 300,
                 height: 300,
-                type: 'circle',
             },
             boundary: {
                 width: 150,
-                height: 150
+                height: 150,
+                type: 'circle'
             },
         })
         cropme.bind({
-            // url: 'owndays.png'
+            // url: 'owndays.png',
+            // position: {
+            //     x: 118,
+            //     y: -16
+            // },
+            // scale: 1.8
+
             // url: 'simpson.png'
-            // url: 'pic.jpeg'
+            url: 'pic.jpeg'
             // url: 'guitar.jpg'
             // url: 'guitar.jpeg'
-            url: 'bleach.jpg'
+            // url: 'bleach.jpg'
         })
-        document.getElementById('crop').addEventListener('click',function(){
+
+        document.getElementById('crop').addEventListener('click', function () {
             let el = document.getElementById('img')
-            cropme.export({
-                size: {
-                    width:800,
-                    height: 800
-                }
-            },function(url){
-               el.src =  url
+            cropme.export().then(url => {
+                el.src = url
             })
+            console.log(cropme.position());
         })
     </script>
 </body>
