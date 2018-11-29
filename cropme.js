@@ -142,18 +142,19 @@
     let deg = this.deg
     let nx = this.x
     let ny = this.y
-    this.deg = 0
-    this.x = this.ox
-    this.y = this.oy
-    this.image.style.transform = transform(this)
-    console.log(this.ox,this.oy,nx,ny);
+    if(deg !== 0){
+      this.deg = 0
+      this.x = this.ox
+      this.y = this.oy
+      this.image.style.transform = transform(this)
+    }
     
 
     let imageData = this.image.getBoundingClientRect()
     let boundaryData = this.boundary.getBoundingClientRect()
     let x = xs * (imageData.x - boundaryData.x - 2)
     let y = ys * (imageData.y - boundaryData.y - 2)
-    if (deg) {
+    if (deg !== 0) {
       ctx.translate(nx - this.x,ny - this.y)
       ctx.translate(width / 2, height / 2);
       ctx.rotate(deg * Math.PI / 180);
