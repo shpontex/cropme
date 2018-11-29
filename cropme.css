@@ -3,10 +3,12 @@
     overflow: hidden;
     margin: 0 auto;
 }
+
 .cropme-container img {
     cursor: move;
     opacity: 0
 }
+
 .boundary {
     position: absolute;
     border: 2px solid #fff;
@@ -22,4 +24,8 @@
 
 .boundary.circle {
     border-radius: 50%
+}
+
+.cropme-slider {
+    text-align: center;
 }

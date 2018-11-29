@@ -49,6 +49,10 @@
         document.getElementById('crop').addEventListener('click', function () {
             el.cropme('export',{
                 type: 'blob',
+                size: {
+                    width: 800,
+                    height: 800
+                }
             }).then(url => {
                 let img = document.getElementById('img')
                 img.src = url

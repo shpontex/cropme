@@ -254,10 +254,6 @@
     this.properties.container.style.width = this.properties.options.container.width + 'px'
     this.properties.container.style.height = this.properties.options.container.height + 'px'
     const image = this.properties.image = document.createElement('img')
-    this.properties.scale = 1
-    const zoom = this.properties.zoom = document.createElement('input')
-        zoom.value = this.properties.scale
-        zoom.type = 'range'
 
     image.ondragstart = () => false
     const boundary = this.properties.boundary = document.createElement('div')
@@ -272,7 +268,6 @@
 
     this.properties.container.appendChild(image)
     this.properties.container.appendChild(boundary)
-    this.properties.container.appendChild(zoom)
 
     let x, movex = 0,
       y, movey = 0,
@@ -288,7 +283,6 @@
       movey = self.properties.y || movey
       x = e.pageX - movex
       y = e.pageY - movey
-      self.properties.x = self.properties.y = null
       window.addEventListener('mousemove', mousemove)
     })
 
@@ -296,12 +290,16 @@
       window.removeEventListener('mousemove', mousemove);
     })
 
-    this.properties.container.addEventListener('mousewheel', function (e) {
-      e.preventDefault()
-      mousemove(e)
-      self.properties.scale = self.properties.scale + (e.wheelDelta / 1200 * self.properties.scale)
-      image.style.transform = transform(self)
-    })
+      this.properties.slider.addEventListener('input',function(e){
+        self.properties.scale = parseFloat(e.target.value)
+        image.style.transform = transform(self)
+      })
+      let mousewheel = function (e) {
+        e.preventDefault()
+        self.properties.scale = self.properties.slider.value =  self.properties.scale + (e.wheelDelta / 1200 * self.properties.scale)
+        image.style.transform = transform(self)
+      }
+    this.properties.container.addEventListener('mousewheel', mousewheel)
 
   }
 
@@ -373,9 +371,24 @@
   }
   class Cropme {
     constructor(el, options) {
+      this.wrapper = el
+      el.classList.add('cropme-wrapper')
+      const container = document.createElement('div')
+      el.appendChild(container)
       this.properties = {}
-      this.properties.container = el
+      this.properties.container = container
       this.properties.options = nestedObjectAssign(defaultOptions, options)
+      this.properties.scale = 1
+      const sliderContainer  = document.createElement('div')
+      sliderContainer.classList.add('cropme-slider')
+      const slider = this.properties.slider = document.createElement('input')
+      slider.type = 'range'
+      slider.setAttribute('min',0.01)
+      slider.setAttribute('max',1.5)
+      slider.setAttribute('step',0.000001)
+      slider.style.width = this.properties.options.container.width + 'px'
+      sliderContainer.appendChild(slider)
+      el.appendChild(sliderContainer)
       createContext.call(this)
     }
     bind(obj) {
@@ -398,6 +411,7 @@
         self.properties.x = cx
         self.properties.y = cy
         self.properties.scale = scale
+        self.properties.slider.value = scale
         self.properties.deg = obj.deg || 0
         self.properties.image.style.transform = transform(self)
         self.properties.image.style.opacity = 1
@@ -424,9 +438,10 @@
       }
     }
     destroy() {
-      this.properties.container.innerHTML = ''
-      this.properties.container.className = this.properties.container.className.replace('cropme-container', '');
+      this.wrapper.innerHTML = ''
+      this.wrapper.className = this.wrapper.className.replace('cropme-wrapper', '');
       delete this.properties
+      delete this.wrapper
     }
   }
 
