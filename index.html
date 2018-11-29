@@ -41,8 +41,8 @@
         cropme.bind({
             // url: 'owndays.png',
             position: {
-                x: -955,
-                y: -614
+                // x: -955,
+                // y: -614
             },
             // scale: 1.8
 
@@ -61,6 +61,7 @@
             // console.log(cropme.position());
         })
         document.getElementById('range').addEventListener('input', function (e) {
+            
             cropme.rotate(e.target.value)
         })
         document.getElementById('reset').addEventListener('click', function (e) {
