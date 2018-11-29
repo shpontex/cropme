@@ -69,7 +69,7 @@
   });
 
   function transform(self) {
-    return 'translate(' + self.x + 'px,' + self.y + 'px) scale(' + self.scale + ')'
+    return 'translate(' + self.x + 'px,' + self.y + 'px) scale(' + self.scale + ') rotate(' + self.deg + 'deg)'
   }
 
   function createContext() {
@@ -78,6 +78,7 @@
     container.style.width = this.options.container.width + 'px'
     container.style.height = this.options.container.height + 'px'
     const image = this.image = document.createElement('img')
+    image.ondragstart = () => false
     const boundary = this.boundary = document.createElement('div')
     boundary.width = this.options.boundary.width || 100
     boundary.height = this.options.boundary.height || 100
@@ -91,14 +92,19 @@
     this.el.appendChild(container)
     container.appendChild(image)
     container.appendChild(boundary)
-    image.ondragstart = () => false
-    let x = 0,
-      y = 0,
-      movex = 0,
-      movey = 0
-    self = this
-    this.scale = 1
 
+    let x, movex = 0,
+      y, movey = 0,
+      self = this
+    this.scale = 1
+    this.deg = 0
+
+
+    let mousemove = function (e) {
+      self.x = e.pageX - x
+      self.y = e.pageY - y
+      image.style.transform = transform(self)
+    }
 
     image.addEventListener('mousedown', function (e) {
       movex = self.x || movex
@@ -107,32 +113,16 @@
       y = e.pageY - movey
       self.x = self.y = null
       window.addEventListener('mousemove', mousemove)
-
     })
-    let mousemove = function (e) {
-      let imageData = image.getBoundingClientRect()
-      let boundaryData = boundary.getBoundingClientRect()
 
-      if (imageData.x > boundaryData.x) {} else {}
-      if (imageData.y > boundaryData.y) {} else {
-
-      }
-
-      self.x = e.pageX - x
-      self.y = e.pageY - y
-
-      image.style.transform = transform(self)
-
-    }
     document.addEventListener('mouseup', function (e) {
       window.removeEventListener('mousemove', mousemove);
     })
+
     container.addEventListener('mousewheel', function (e) {
       e.preventDefault()
-
       self.scale = self.scale + (e.wheelDelta / 1200 * self.scale)
       image.style.transform = transform(self)
-
     })
 
   }
@@ -140,9 +130,6 @@
   function createCanvas(options) {
     let canvas = document.createElement('canvas'),
       ctx = canvas.getContext('2d');
-
-    let imageData = this.image.getBoundingClientRect()
-    let boundaryData = this.boundary.getBoundingClientRect()
 
     let width = options.size && options.size.width ? options.size.width : this.options.boundary.width
     let height = options.size && options.size.height ? options.size.height : this.options.boundary.height
@@ -152,13 +139,35 @@
     canvas.width = width
     canvas.height = height
 
+    let deg = this.deg
+    let nx = this.x
+    let ny = this.y
+    this.deg = 0
+    this.x = this.ox
+    this.y = this.oy
+    this.image.style.transform = transform(this)
+    console.log(this.ox,this.oy,nx,ny);
+    
+
+    let imageData = this.image.getBoundingClientRect()
+    let boundaryData = this.boundary.getBoundingClientRect()
     let x = xs * (imageData.x - boundaryData.x - 2)
     let y = ys * (imageData.y - boundaryData.y - 2)
+    if (deg) {
+      ctx.translate(nx - this.x,ny - this.y)
+      ctx.translate(width / 2, height / 2);
+      ctx.rotate(deg * Math.PI / 180);
+      ctx.translate(-width / 2, -height / 2);
+      this.deg = deg
+      this.x = nx
+      this.y = ny
+      this.image.style.transform = transform(this)
+    }
 
     ctx.drawImage(this.image, x, y, imageData.width * xs, imageData.height * ys)
     if (this.options.boundary.type === 'circle') {
       ctx.globalCompositeOperation = 'destination-in'
-      ctx.arc(canvas.width / 2, canvas.height / 2, canvas.width / 2, 0, Math.PI * 2, true)
+      ctx.arc(width / 2, height / 2, width / 2, 0, Math.PI * 2)
       ctx.fill();
     }
     if (this.options.boundary.type === 'triangle') {
@@ -185,29 +194,34 @@
       this.image.onload = function () {
         let imageData = self.image.getBoundingClientRect()
         let containerData = self.container.getBoundingClientRect()
-        let cx = containerData.width / 2 - imageData.width / 2
-        let cy = containerData.height / 2 - imageData.height / 2
+        let cx = (containerData.width - imageData.width) / 2
+        let cy = (containerData.height - imageData.height) / 2
+        self.ox = cx
+        self.oy = cy
 
         if (typeof obj.position == 'object') {
-          cx = obj.position.x
-          cy = obj.position.y
+          cx = obj.position.x || cx
+          cy = obj.position.y || cy
         }
 
         let scale = obj.scale ? obj.scale : containerData.height / imageData.height
         self.x = cx
-        self.y = cy
+        self.y  = cy
         self.scale = scale
         self.image.style.transform = transform(self)
         self.image.style.opacity = 1
 
       }
     }
+    rotate(deg) {
+      this.deg = deg
+      this.image.style.transform = transform(this)
+    }
     export (options = {}) {
       let canvas = createCanvas.call(this, options)
       return new Promise((resolve) => {
         options.type === 'blob' ? canvas.toBlob(blob => resolve(URL.createObjectURL(blob))) : resolve(canvas.toDataURL())
       })
-
     }
     position() {
       return {

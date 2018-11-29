@@ -1,6 +1,7 @@
 .cropme-container {
     position: relative;
     overflow: hidden;
+    margin: 0 auto;
 }
 .cropme-container img {
     cursor: move;
