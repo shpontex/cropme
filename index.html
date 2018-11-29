@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,11 +22,43 @@
     <div id="cropme"></div>
     <button id="crop">Crop me</button>
     <button id="reset">reset</button>
-    <img style="width:150px" id="img" src="" alt="">
+    <button id="destroy">destroy</button>
+    <img style="width:150px" id="img">
 
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
     <script src="croppie.js"></script>
     <script src="cropme.js"></script>
     <script>
+        var el = $('#cropme').cropme({
+            container: {
+                width: 300,
+                height: 300,
+            },
+            boundary: {
+                width: 150,
+                height: 150,
+            },
+        })
+        el.cropme('bind', {
+            url: 'pic.jpeg',
+        })
+        document.getElementById('destroy').addEventListener('click', function () {
+            el.cropme('destroy')
+        })
+        document.getElementById('crop').addEventListener('click', function () {
+            el.cropme('export',{
+                type: 'blob',
+            }).then(url => {
+                let img = document.getElementById('img')
+                img.src = url
+            })
+        })
+        document.getElementById('range').addEventListener('input', function (e) {
+            el.cropme('rotate',e.target.value)
+        })
+
+        /*
         let el = document.getElementById('cropme')
         const cropme = new Cropme(el, {
             container: {
@@ -68,6 +101,7 @@
         document.getElementById('reset').addEventListener('click', function (e) {
             cropme.rotate(0)
         })
+        */
     </script>
 </body>
 
