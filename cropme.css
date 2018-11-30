@@ -3,9 +3,7 @@
     overflow: hidden;
     margin: 0 auto;
 }
-#img {
-    border: 1px solid #333;
-}
+
 .cropme-container img {
     cursor: move;
     opacity: 0;
@@ -31,9 +29,11 @@
 .cropme-slider {
     text-align: center;
 }
+
 .cropme-slider input {
     -webkit-appearance: none;
 }
+
 .cropme-slider input::-webkit-slider-runnable-track {
     height: 3px;
     background: rgba(0, 0, 0, 0.5);

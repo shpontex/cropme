@@ -329,16 +329,20 @@
     canvas.width = width
     canvas.height = height
 
-    
+
 
     let deg = this.properties.deg
     let nx = this.properties.x
     let ny = this.properties.y
-    if (deg !== 0) {
-      this.properties.deg = 0
-      this.properties.x = this.properties.ox
-      this.properties.y = this.properties.oy
+
+    function transformImage(deg, ox, oy) {
+      this.properties.deg = deg
+      this.properties.x = ox
+      this.properties.y = oy
       this.properties.image.style.transform = transform(this)
+    }
+    if (deg !== 0) {
+      transformImage.call(this,0, this.properties.ox, this.properties.oy)
     }
 
     let imageData = this.properties.image.getBoundingClientRect()
@@ -353,29 +357,31 @@
     }
 
     ctx.drawImage(this.properties.image, x, y, imageData.width * xs, imageData.height * ys)
+
     if (this.properties.options.boundary.type === 'circle') {
       ctx.translate(width / 2, height / 2);
       ctx.rotate(-deg * Math.PI / 180);
       ctx.translate(-width / 2, -height / 2);
-      ctx.globalCompositeOperation = 'destination-in'
       ctx.translate((this.properties.x - nx) * xs, (this.properties.y - ny) * ys)
+      ctx.globalCompositeOperation = 'destination-in'
       ctx.arc(width / 2, height / 2, width / 2, 0, 2 * Math.PI)
       ctx.fill();
     }
     if (this.properties.options.boundary.type === 'triangle') {
+      ctx.translate(width / 2, height / 2);
+      ctx.rotate(-deg * Math.PI / 180);
+      ctx.translate(-width / 2, -height / 2);
+      ctx.translate((this.properties.x - nx) * xs, (this.properties.y - ny) * ys)
       ctx.beginPath();
       ctx.globalCompositeOperation = 'destination-in'
-      ctx.moveTo(canvas.width / 2, 0);
-      ctx.lineTo(canvas.width, canvas.height);
-      ctx.lineTo(0, canvas.height);
+      ctx.moveTo(width / 2, 0);
+      ctx.lineTo(width, height);
+      ctx.lineTo(0, height);
       ctx.closePath();
       ctx.fill();
     }
 
-    this.properties.deg = deg
-    this.properties.x = nx
-    this.properties.y = ny
-    this.properties.image.style.transform = transform(this)
+    transformImage.call(this,deg, nx, ny)
 
     return canvas
   }
