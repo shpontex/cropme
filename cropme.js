@@ -329,6 +329,8 @@
     canvas.width = width
     canvas.height = height
 
+    
+
     let deg = this.properties.deg
     let nx = this.properties.x
     let ny = this.properties.y
@@ -339,14 +341,12 @@
       this.properties.image.style.transform = transform(this)
     }
 
-
-
     let imageData = this.properties.image.getBoundingClientRect()
     let boundaryData = this.properties.boundary.getBoundingClientRect()
     let x = xs * (imageData.x - boundaryData.x - 2)
     let y = ys * (imageData.y - boundaryData.y - 2)
     if (deg !== 0) {
-      ctx.translate(nx - this.properties.x, ny - this.properties.y)
+      ctx.translate((nx - this.properties.x) * xs, (ny - this.properties.y) * ys)
       ctx.translate(width / 2, height / 2);
       ctx.rotate(deg * Math.PI / 180);
       ctx.translate(-width / 2, -height / 2);
@@ -358,8 +358,8 @@
       ctx.rotate(-deg * Math.PI / 180);
       ctx.translate(-width / 2, -height / 2);
       ctx.globalCompositeOperation = 'destination-in'
-      ctx.translate(this.properties.x - nx, this.properties.y - ny)
-      ctx.arc(width / 2, height / 2, width / 2, 0, Math.PI * 2)
+      ctx.translate((this.properties.x - nx) * xs, (this.properties.y - ny) * ys)
+      ctx.arc(width / 2, height / 2, width / 2, 0, 2 * Math.PI)
       ctx.fill();
     }
     if (this.properties.options.boundary.type === 'triangle') {
