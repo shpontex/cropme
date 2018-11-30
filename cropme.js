@@ -354,8 +354,12 @@
 
     ctx.drawImage(this.properties.image, x, y, imageData.width * xs, imageData.height * ys)
     if (this.properties.options.boundary.type === 'circle') {
+      ctx.translate(width / 2, height / 2);
+      ctx.rotate(-deg * Math.PI / 180);
+      ctx.translate(-width / 2, -height / 2);
       ctx.globalCompositeOperation = 'destination-in'
-      ctx.arc(width / 2 - (nx - this.properties.x), height / 2 - (ny - this.properties.y), width / 2, 0, Math.PI * 2)
+      ctx.translate(this.properties.x - nx, this.properties.y - ny)
+      ctx.arc(width / 2, height / 2, width / 2, 0, Math.PI * 2)
       ctx.fill();
     }
     if (this.properties.options.boundary.type === 'triangle') {
@@ -368,11 +372,11 @@
       ctx.fill();
     }
 
-      this.properties.deg = deg
-      this.properties.x = nx
-      this.properties.y = ny
-      this.properties.image.style.transform = transform(this)
-      
+    this.properties.deg = deg
+    this.properties.x = nx
+    this.properties.y = ny
+    this.properties.image.style.transform = transform(this)
+
     return canvas
   }
 
