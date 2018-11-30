@@ -29,3 +29,25 @@
 .cropme-slider {
     text-align: center;
 }
+.cropme-slider input {
+    -webkit-appearance: none;
+}
+.cropme-slider input::-webkit-slider-runnable-track {
+    height: 3px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 3px;
+}
+
+.cropme-slider input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #ddd;
+    margin-top: -6px;
+}
+
+
+.cropme-slider input:focus {
+    outline: none;
+}
