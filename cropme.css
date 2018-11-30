@@ -3,10 +3,12 @@
     overflow: hidden;
     margin: 0 auto;
 }
-
+#img {
+    border: 1px solid #333;
+}
 .cropme-container img {
     cursor: move;
-    opacity: 0
+    opacity: 0;
 }
 
 .boundary {
