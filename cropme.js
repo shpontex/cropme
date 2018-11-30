@@ -214,7 +214,15 @@
 
   if (window.jQuery) {
     jQuery.fn.cropme = function (options, obj) {
-      if (typeof options === 'string') {
+
+      if (typeof options === 'object') {
+
+        return this.each(function () {
+          var cropme = new Cropme(this, options)
+          $(this).data('cropme', cropme)
+        });
+
+      } else if (typeof options === 'string') {
 
         let cropme = this.data('cropme')
 
@@ -233,13 +241,10 @@
         if (options === 'destroy') {
           return cropme.destroy()
         }
+        throw 'Error: ' + options + ' method not found';
 
       } else {
-
-        return this.each(function () {
-          var cropme = new Cropme(this, options)
-          $(this).data('cropme', cropme)
-        });
+        throw 'Error: the argument must be an object or a string'
 
       }
     }
@@ -290,15 +295,15 @@
       window.removeEventListener('mousemove', mousemove);
     })
 
-      this.properties.slider.addEventListener('input',function(e){
-        self.properties.scale = parseFloat(e.target.value)
-        image.style.transform = transform(self)
-      })
-      let mousewheel = function (e) {
-        e.preventDefault()
-        self.properties.scale = self.properties.slider.value =  self.properties.scale + (e.wheelDelta / 1200 * self.properties.scale)
-        image.style.transform = transform(self)
-      }
+    this.properties.slider.addEventListener('input', function (e) {
+      self.properties.scale = parseFloat(e.target.value)
+      image.style.transform = transform(self)
+    })
+    let mousewheel = function (e) {
+      e.preventDefault()
+      self.properties.scale = self.properties.slider.value = self.properties.scale + (e.wheelDelta / 1200 * self.properties.scale)
+      image.style.transform = transform(self)
+    }
     this.properties.container.addEventListener('mousewheel', mousewheel)
 
   }
@@ -369,26 +374,38 @@
 
     return canvas
   }
+
+  function createSlider() {
+    const sliderContainer = document.createElement('div')
+    sliderContainer.classList.add('cropme-slider')
+    const slider = this.properties.slider = document.createElement('input')
+    slider.type = 'range'
+    slider.setAttribute('min', 0.01)
+    slider.setAttribute('max', 1.5)
+    slider.setAttribute('step', 0.000001)
+    slider.style.width = this.properties.options.container.width + 'px'
+    sliderContainer.appendChild(slider)
+    this.properties.wrapper.appendChild(sliderContainer)
+  }
+
+  function createContainer() {
+    const container = document.createElement('div')
+    this.properties.container = container
+    this.properties.wrapper.appendChild(container)
+  }
+
   class Cropme {
     constructor(el, options) {
-      this.wrapper = el
+      if (el.className.indexOf('cropme-wrapper') > -1) {
+        throw 'Error: Cropme is already initialized'
+      }
       el.classList.add('cropme-wrapper')
-      const container = document.createElement('div')
-      el.appendChild(container)
       this.properties = {}
-      this.properties.container = container
+      this.properties.wrapper = el
       this.properties.options = nestedObjectAssign(defaultOptions, options)
       this.properties.scale = 1
-      const sliderContainer  = document.createElement('div')
-      sliderContainer.classList.add('cropme-slider')
-      const slider = this.properties.slider = document.createElement('input')
-      slider.type = 'range'
-      slider.setAttribute('min',0.01)
-      slider.setAttribute('max',1.5)
-      slider.setAttribute('step',0.000001)
-      slider.style.width = this.properties.options.container.width + 'px'
-      sliderContainer.appendChild(slider)
-      el.appendChild(sliderContainer)
+      createContainer.call(this)
+      createSlider.call(this)
       createContext.call(this)
     }
     bind(obj) {
@@ -438,10 +455,10 @@
       }
     }
     destroy() {
-      this.wrapper.innerHTML = ''
-      this.wrapper.className = this.wrapper.className.replace('cropme-wrapper', '');
+      this.properties.wrapper.innerHTML = ''
+      this.properties.wrapper.className = this.properties.wrapper.className.replace('cropme-wrapper', '');
       delete this.properties
-      delete this.wrapper
+
     }
   }
 
