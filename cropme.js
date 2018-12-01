@@ -57,7 +57,6 @@
       document.addEventListener('mousemove', move)
       document.addEventListener("touchmove", move);
     }
-
     image.addEventListener('mousedown', down)
     image.addEventListener("touchstart", down);
 
@@ -69,6 +68,13 @@
         let touches = e.touches[0]
         let x = touches.pageX - second_touches.pageX
         let y = touches.pageY - second_touches.pageY
+        let deg = 90 - Math.atan(x / y) * 180 / Math.PI;
+
+        if(!p.odeg) {
+          p.odeg = deg - p.deg
+        }
+        p.deg = deg - p.odeg
+        
         let touches_dist = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
         if (!p.od) {
           p.od = touches_dist / p.scale;
@@ -84,6 +90,7 @@
       document.removeEventListener('touchmove', move);
       document.removeEventListener('mousemove', move);
       p.od = 0;
+      p.odeg = 0;
     }
     document.addEventListener('mouseup', up)
     document.addEventListener("touchend", up);
