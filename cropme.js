@@ -73,7 +73,7 @@
         if (!p.od) {
           p.od = touches_dist / p.scale;
         }
-        p.scale = touches_dist / p.od;
+        p.scale = p.slider.value = touches_dist / p.od;
       }
       p.x = e.pageX - x
       p.y = e.pageY - y
