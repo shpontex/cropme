@@ -11,29 +11,29 @@
     createSlider.call(this)
     const image = p.image = document.createElement('img')
     image.ondragstart = () => false
-    const boundary = p.boundary = document.createElement('div')
+    const viewport = p.viewport = document.createElement('div')
 
-    o.boundary.width = o.boundary.width > o.container.width ? o.container.width : o.boundary.width
-    o.boundary.height = o.boundary.height > o.container.height ? o.container.height : o.boundary.height
-    boundary.style.width = o.boundary.width + 'px'
-    boundary.style.height = o.boundary.height + 'px'
-    boundary.className = 'boundary'
+    o.viewport.width = o.viewport.width > o.container.width ? o.container.width : o.viewport.width
+    o.viewport.height = o.viewport.height > o.container.height ? o.container.height : o.viewport.height
+    viewport.style.width = o.viewport.width + 'px'
+    viewport.style.height = o.viewport.height + 'px'
+    viewport.className = 'viewport'
 
-    if (o.boundary.type === 'circle') {
-      boundary.className = 'boundary circle'
+    if (o.viewport.type === 'circle') {
+      viewport.className = 'viewport circle'
     }
 
     p.container.appendChild(image)
-    p.container.appendChild(boundary)
+    p.container.appendChild(viewport)
 
     let border = 0;
-    if (o.boundary.border) {
-      let boundary_border = (o.container.width - o.boundary.width) / 2
-      border = boundary_border < p.boundary.clientLeft ? boundary_border : p.boundary.clientLeft
+    if (o.viewport.border) {
+      let viewport_border = (o.container.width - o.viewport.width) / 2
+      border = viewport_border < p.viewport.clientLeft ? viewport_border : p.viewport.clientLeft
     }
 
-    p.boundary.style.borderWidth = border + 'px'
-    p.boundary.border = border
+    p.viewport.style.borderWidth = border + 'px'
+    p.viewport.border = border
 
     let x, movex = 0,
       y, movey = 0
@@ -104,8 +104,8 @@
     let canvas = document.createElement('canvas'),
       ctx = canvas.getContext('2d');
 
-    let width = o.boundary.width
-    let height = o.boundary.height
+    let width = o.viewport.width
+    let height = o.viewport.height
 
     if (typeof options === 'object') {
       if (options.scale) {
@@ -120,8 +120,8 @@
     canvas.width = width
     canvas.height = height
 
-    const xs = width / o.boundary.width
-    const ys = height / o.boundary.height
+    const xs = width / o.viewport.width
+    const ys = height / o.viewport.height
 
     const deg = p.deg
     const nx = p.x
@@ -138,10 +138,10 @@
     }
 
     const imageData = p.image.getBoundingClientRect()
-    const boundaryData = p.boundary.getBoundingClientRect()
+    const viewportData = p.viewport.getBoundingClientRect()
 
-    const x = xs * (imageData.x - boundaryData.x - p.boundary.border)
-    const y = ys * (imageData.y - boundaryData.y - p.boundary.border)
+    const x = xs * (imageData.x - viewportData.x - p.viewport.border)
+    const y = ys * (imageData.y - viewportData.y - p.viewport.border)
     if (deg !== 0) {
       ctx.translate((nx - p.x) * xs, (ny - p.y) * ys)
       ctx.translate(width / 2, height / 2);
@@ -151,12 +151,12 @@
 
     ctx.drawImage(p.image, x, y, imageData.width * xs, imageData.height * ys)
 
-    if (o.boundary.type === 'circle') {
+    if (o.viewport.type === 'circle') {
       ctx.translate(width / 2, height / 2);
       ctx.rotate(-deg * Math.PI / 180);
       ctx.translate(-width / 2, -height / 2);
-      ctx.scale(1, o.boundary.height / o.boundary.width);
-      let diff = (o.boundary.width - o.boundary.height) / 2 * xs
+      ctx.scale(1, o.viewport.height / o.viewport.width);
+      let diff = (o.viewport.width - o.viewport.height) / 2 * xs
       let x_coordinate = (p.x - nx) * xs
       let y_coordinate = (p.y - ny) * ys
       if (diff > 0) {
@@ -170,7 +170,7 @@
       ctx.arc(width / 2, height / 2, width / 2, 0, 2 * Math.PI)
       ctx.fill();
     }
-    if (o.boundary.type === 'triangle') {
+    if (o.viewport.type === 'triangle') {
       ctx.translate(width / 2, height / 2);
       ctx.rotate(-deg * Math.PI / 180);
       ctx.translate(-width / 2, -height / 2);
@@ -282,7 +282,7 @@
       height: 300,
 
     },
-    boundary: {
+    viewport: {
       width: 100,
       height: 100,
     },

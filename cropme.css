@@ -13,7 +13,7 @@
 #img {
     border: 5px solid #f00
 }
-.boundary {
+.viewport {
     position: absolute;
     border-width: 2px;
     border-style: solid;
@@ -28,7 +28,7 @@
     pointer-events: none;
 }
 
-.boundary.circle {
+.viewport.circle {
     border-radius: 50%
 }
 
@@ -54,7 +54,6 @@
     background: #ddd;
     margin-top: -6px;
 }
-
 
 .cropme-slider input:focus {
     outline: none;
