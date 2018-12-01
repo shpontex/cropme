@@ -1,86 +1,115 @@
 (function (global) {
 
-    var o, p
+  var o, p
 
-    function transform() {
-      return 'translate(' + p.x + 'px,' + p.y + 'px) scale(' + p.scale + ') rotate(' + p.deg + 'deg)'
+  function transform() {
+    return 'translate(' + p.x + 'px,' + p.y + 'px) scale(' + p.scale + ') rotate(' + p.deg + 'deg)'
+  }
+
+  function createContext() {
+    createContainer.call(this)
+    createSlider.call(this)
+    const image = p.image = document.createElement('img')
+    image.ondragstart = () => false
+    const boundary = p.boundary = document.createElement('div')
+
+    o.boundary.width = o.boundary.width > o.container.width ? o.container.width : o.boundary.width
+    o.boundary.height = o.boundary.height > o.container.height ? o.container.height : o.boundary.height
+    boundary.style.width = o.boundary.width + 'px'
+    boundary.style.height = o.boundary.height + 'px'
+    boundary.className = 'boundary'
+
+    if (o.boundary.type === 'circle') {
+      boundary.className = 'boundary circle'
     }
 
-    function createContext() {
-      createContainer.call(this)
-      createSlider.call(this)
-      const image = p.image = document.createElement('img')
-      image.ondragstart = () => false
-      const boundary = p.boundary = document.createElement('div')
+    p.container.appendChild(image)
+    p.container.appendChild(boundary)
 
-      o.boundary.width = o.boundary.width > o.container.width ? o.container.width : o.boundary.width
-      o.boundary.height = o.boundary.height > o.container.height ? o.container.height : o.boundary.height
-      boundary.style.width = o.boundary.width + 'px'
-      boundary.style.height = o.boundary.height + 'px'
-      boundary.className = 'boundary'
+    let boundary_border = (o.container.width - o.boundary.width) / 2
+    let border = boundary_border < p.boundary.clientLeft ? boundary_border : p.boundary.clientLeft
 
-      if (o.boundary.type === 'circle') {
-        boundary.className = 'boundary circle'
+    p.boundary.style.borderWidth = border + 'px'
+    p.boundary.border = border
+
+    let x, movex = 0,
+      y, movey = 0
+
+      function setCoordinates (e){
+
+      if (e.touches) {
+        let touches = e.touches[0]
+        e.pageX = touches.pageX
+        e.pageY = touches.pageY
       }
-
-      p.container.appendChild(image)
-      p.container.appendChild(boundary)
-
-      let boundary_border = (o.container.width - o.boundary.width) / 2
-      let border = boundary_border < p.boundary.clientLeft ? boundary_border : p.boundary.clientLeft
-
-      p.boundary.style.borderWidth = border + 'px'
-      p.boundary.border = border
-
-      let x, movex = 0,
-        y, movey = 0
-
-      let mousemove = function (e) {
-        p.x = e.pageX - x
-        p.y = e.pageY - y
-        image.style.transform = transform()
+      return e
       }
-      image.addEventListener('mousedown', function (e) {
-        movex = p.x || movex
-        movey = p.y || movey
-        x = e.pageX - movex
-        y = e.pageY - movey
-        window.addEventListener('mousemove', mousemove)
-      })
-
-      document.addEventListener('mouseup', function (e) {
-        window.removeEventListener('mousemove', mousemove);
-      })
-
-      p.slider.addEventListener('input', function (e) {
-        p.scale = parseFloat(e.target.value)
-        image.style.transform = transform()
-      })
-      let mousewheel = function (e) {
-        e.preventDefault()
-        p.scale = p.slider.value = p.scale + (e.wheelDelta / 1200 * p.scale)
-        image.style.transform = transform()
-      }
-      p.container.addEventListener('mousewheel', mousewheel)
-
+    let move = function (e) {
+      e.preventDefault();
+      p.x = e.pageX - x
+      p.y = e.pageY - y
+      image.style.transform = transform()
     }
-
-    function createCanvas(options) {
-      let canvas = document.createElement('canvas'),
-        ctx = canvas.getContext('2d');
-
-      let width = o.boundary.width
-      let height = o.boundary.height
-
-      if (typeof options === 'object') {
-        if (options.scale) {
-          width = width * options.scale
-          height = height * options.scale
-        } else if (options.width) {
-          height = options.width * height / width
-          width = options.width
-        }
+    let down = function (e) {
+      e.preventDefault();
+      if (e.touches) {
+        let touches = e.touches[0]
+        e.pageX = touches.pageX
+        e.pageY = touches.pageY
       }
+      movex = p.x || movex
+      movey = p.y || movey
+      x = e.pageX - movex
+      y = e.pageY - movey
+      window.addEventListener('mousemove', move)
+      window.addEventListener("touchmove", move);
+    }
+    image.addEventListener('mousedown', down)
+
+    document.addEventListener('mouseup', function (e) {
+      window.removeEventListener('mousemove', mousemove);
+    })
+
+    p.slider.addEventListener('input', function (e) {
+      p.scale = parseFloat(e.target.value)
+      image.style.transform = transform()
+    })
+    let mousewheel = function (e) {
+      e.preventDefault()
+      p.scale = p.slider.value = p.scale + (e.wheelDelta / 1200 * p.scale)
+      image.style.transform = transform()
+    }
+    p.container.addEventListener('mousewheel', mousewheel)
+
+    // touch 
+
+    image.addEventListener("touchstart", down);
+    document.addEventListener("touchend", function(){
+      console.log("end");
+      
+      window.removeEventListener('touchmove', move);
+    });
+    // el.addEventListener("touchend", handleEnd, false);
+    // el.addEventListener("touchcancel", handleCancel, false);
+    // el.addEventListener("touchleave", handleLeave, false);
+  }
+
+  function createCanvas(options) {
+    let canvas = document.createElement('canvas'),
+      ctx = canvas.getContext('2d');
+
+    let width = o.boundary.width
+    let height = o.boundary.height
+
+    if (typeof options === 'object') {
+      if (options.scale) {
+        width = width * options.scale
+        height = height * options.scale
+      } else if (options.width) {
+        height = options.width * height / width
+        width = options.width
+      }
+    }
 
     canvas.width = width
     canvas.height = height
