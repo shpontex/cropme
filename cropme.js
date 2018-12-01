@@ -26,8 +26,11 @@
     p.container.appendChild(image)
     p.container.appendChild(boundary)
 
-    let boundary_border = (o.container.width - o.boundary.width) / 2
-    let border = boundary_border < p.boundary.clientLeft ? boundary_border : p.boundary.clientLeft
+    let border = 0;
+    if (o.boundary.border) {
+      let boundary_border = (o.container.width - o.boundary.width) / 2
+      border = boundary_border < p.boundary.clientLeft ? boundary_border : p.boundary.clientLeft
+    }
 
     p.boundary.style.borderWidth = border + 'px'
     p.boundary.border = border
@@ -35,40 +38,55 @@
     let x, movex = 0,
       y, movey = 0
 
-      function setCoordinates (e){
 
+    function setCoordinates(e) {
       if (e.touches) {
         let touches = e.touches[0]
         e.pageX = touches.pageX
         e.pageY = touches.pageY
       }
       return e
-      }
-    let move = function (e) {
-      e.preventDefault();
-      p.x = e.pageX - x
-      p.y = e.pageY - y
-      image.style.transform = transform()
     }
     let down = function (e) {
       e.preventDefault();
-      if (e.touches) {
-        let touches = e.touches[0]
-        e.pageX = touches.pageX
-        e.pageY = touches.pageY
-      }
+      e = setCoordinates(e)
       movex = p.x || movex
       movey = p.y || movey
       x = e.pageX - movex
       y = e.pageY - movey
-      window.addEventListener('mousemove', move)
-      window.addEventListener("touchmove", move);
+      document.addEventListener('mousemove', move)
+      document.addEventListener("touchmove", move);
     }
-    image.addEventListener('mousedown', down)
 
-    document.addEventListener('mouseup', function (e) {
-      window.removeEventListener('mousemove', mousemove);
-    })
+    image.addEventListener('mousedown', down)
+    image.addEventListener("touchstart", down);
+
+    let move = function (e) {
+      e.preventDefault();
+      e = setCoordinates(e)
+      if (e.touches && e.touches.length > 1) {
+        let second_touches = e.touches[1]
+        let touches = e.touches[0]
+        let x = touches.pageX - second_touches.pageX
+        let y = touches.pageY - second_touches.pageY
+        let touches_dist = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+        if (!p.od) {
+          p.od = touches_dist / p.scale;
+        }
+        p.scale = touches_dist / p.od;
+      }
+      p.x = e.pageX - x
+      p.y = e.pageY - y
+      image.style.transform = transform()
+    }
+
+    let up = function () {
+      document.removeEventListener('touchmove', move);
+      document.removeEventListener('mousemove', move);
+      p.od = 0;
+    }
+    document.addEventListener('mouseup', up)
+    document.addEventListener("touchend", up);
 
     p.slider.addEventListener('input', function (e) {
       p.scale = parseFloat(e.target.value)
@@ -80,18 +98,6 @@
       image.style.transform = transform()
     }
     p.container.addEventListener('mousewheel', mousewheel)
-
-    // touch 
-
-    image.addEventListener("touchstart", down);
-    document.addEventListener("touchend", function(){
-      console.log("end");
-      
-      window.removeEventListener('touchmove', move);
-    });
-    // el.addEventListener("touchend", handleEnd, false);
-    // el.addEventListener("touchcancel", handleCancel, false);
-    // el.addEventListener("touchleave", handleLeave, false);
   }
 
   function createCanvas(options) {
@@ -266,8 +272,6 @@
       p.wrapper.innerHTML = ''
       p.wrapper.className = p.wrapper.className.replace('cropme-wrapper', '');
       delete this.properties
-      console.log(this);
-
 
     }
   }
