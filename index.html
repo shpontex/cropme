@@ -23,7 +23,7 @@
     <button id="crop">Crop me</button>
     <button id="reset">reset</button>
     <button id="destroy">destroy</button>
-    <img style="height:300px" id="img">
+    <img style="max-height:300px" id="img">
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
@@ -37,8 +37,9 @@
                 height: 300,
             },
             boundary: {
-                width: 100,
-                height: 200,
+                width: 300,
+                height: 300,
+                // border: false
                 // type: 'circle'
             },
         })
