@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1 user-scalable=no" >
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="croppie.css">
     <link rel="stylesheet" href="cropme.css">
@@ -36,7 +36,7 @@
                 width: 300,
                 height: 300,
             },
-            boundary: {
+            viewport: {
                 width: 300,
                 height: 300,
                 // border: false
@@ -52,7 +52,7 @@
         document.getElementById('crop').addEventListener('click', function () {
             el.cropme('export',{
                 // type: 'blob',
-                // scale: 3,
+                // scale: 0.5,
                 width: 800,
             }).then(url => {
                 let img = document.getElementById('img')
@@ -69,7 +69,7 @@
         //         width: 300,
         //         height: 300,
         //     },
-        //     boundary: {
+        //     viewport: {
         //         width: 150,
         //         height: 150,
         //         // type: 'circle'
