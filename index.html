@@ -23,7 +23,7 @@
     <button id="crop">Crop me</button>
     <button id="reset">reset</button>
     <button id="destroy">destroy</button>
-    <img style="width:150px" id="img">
+    <img style="width:350px" id="img">
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
@@ -37,9 +37,9 @@
                 height: 300,
             },
             boundary: {
-                // width: 350,
-                // height: 350,
-                type: 'circle'
+                width: 297,
+                height: 197,
+                // type: 'circle'
             },
         })
         el.cropme('bind', {
@@ -51,6 +51,7 @@
         document.getElementById('crop').addEventListener('click', function () {
             el.cropme('export',{
                 type: 'blob',
+                scale: 3,
                 size: {
                     width: 800,
                     height: 800

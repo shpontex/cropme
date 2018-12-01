@@ -1,28 +1,40 @@
 (function (global) {
   // ----------------- Pollyfils ---------------------------
 
-  var o,p
+  var o, p
 
   function transform() {
     return 'translate(' + p.x + 'px,' + p.y + 'px) scale(' + p.scale + ') rotate(' + p.deg + 'deg)'
   }
 
   function createContext() {
+    createContainer.call(this)
+    createSlider.call(this)
     const image = p.image = document.createElement('img')
     image.ondragstart = () => false
     const boundary = p.boundary = document.createElement('div')
-    boundary.style.width = this.options.boundary.width + 'px'
-    boundary.style.height = this.options.boundary.height + 'px'
+
+    o.boundary.width = o.boundary.width > o.container.width ? o.container.width : o.boundary.width
+    o.boundary.height = o.boundary.height > o.container.height ? o.container.height : o.boundary.height
+    boundary.style.width = o.boundary.width + 'px'
+    boundary.style.height = o.boundary.height + 'px'
     boundary.className = 'boundary'
-    if (this.options.boundary.type === 'circle') {
+
+    if (o.boundary.type === 'circle') {
       boundary.className = 'boundary circle'
     }
 
     p.container.appendChild(image)
     p.container.appendChild(boundary)
 
+    let boundary_border = (o.container.width - o.boundary.width) / 2
+    let border = boundary_border < p.boundary.clientLeft ? boundary_border : p.boundary.clientLeft
+
+    p.boundary.style.borderWidth = border + 'px'
+    p.boundary.border = border
+
     let x, movex = 0,
-     y, movey = 0
+      y, movey = 0
 
     let mousemove = function (e) {
       p.x = e.pageX - x
@@ -58,28 +70,33 @@
     let canvas = document.createElement('canvas'),
       ctx = canvas.getContext('2d');
 
-    let width = this.options.boundary.width
-    let height = this.options.boundary.height
+    let width = o.boundary.width
+    let height = o.boundary.height
 
     if (typeof options === 'object') {
-      if (options.size && options.size.width) {
-        width = options.size.width
+      if (options.scale) {
+        width = width * options.scale
+        height = height * options.scale
+      } else {
+        if (options.size && options.size.width) {
+          width = options.size.width
+        }
+        if (options.size && options.size.height) {
+          height = options.size.height
+        }
       }
-      if (options.size && options.size.height) {
-        height = options.size.height
-      }
+
     }
-    let xs = width / this.options.boundary.width
-    let ys = height / this.options.boundary.height
 
     canvas.width = width
     canvas.height = height
 
+    const xs = width / o.boundary.width
+    const ys = height / o.boundary.height
 
-
-    let deg = p.deg
-    let nx = p.x
-    let ny = p.y
+    const deg = p.deg
+    const nx = p.x
+    const ny = p.y
 
     function transformImage(deg, ox, oy) {
       p.deg = deg
@@ -88,13 +105,14 @@
       p.image.style.transform = transform()
     }
     if (deg !== 0) {
-      transformImage.call(this,0, p.ox, p.oy)
+      transformImage.call(this, 0, p.ox, p.oy)
     }
 
-    let imageData = p.image.getBoundingClientRect()
-    let boundaryData = p.boundary.getBoundingClientRect()
-    let x = xs * (imageData.x - boundaryData.x - 2)
-    let y = ys * (imageData.y - boundaryData.y - 2)
+    const imageData = p.image.getBoundingClientRect()
+    const boundaryData = p.boundary.getBoundingClientRect()
+
+    const x = xs * (imageData.x - boundaryData.x - p.boundary.border)
+    const y = ys * (imageData.y - boundaryData.y - p.boundary.border)
     if (deg !== 0) {
       ctx.translate((nx - p.x) * xs, (ny - p.y) * ys)
       ctx.translate(width / 2, height / 2);
@@ -104,7 +122,7 @@
 
     ctx.drawImage(p.image, x, y, imageData.width * xs, imageData.height * ys)
 
-    if (this.options.boundary.type === 'circle') {
+    if (o.boundary.type === 'circle') {
       ctx.translate(width / 2, height / 2);
       ctx.rotate(-deg * Math.PI / 180);
       ctx.translate(-width / 2, -height / 2);
@@ -113,7 +131,7 @@
       ctx.arc(width / 2, height / 2, width / 2, 0, 2 * Math.PI)
       ctx.fill();
     }
-    if (this.options.boundary.type === 'triangle') {
+    if (o.boundary.type === 'triangle') {
       ctx.translate(width / 2, height / 2);
       ctx.rotate(-deg * Math.PI / 180);
       ctx.translate(-width / 2, -height / 2);
@@ -127,7 +145,7 @@
       ctx.fill();
     }
 
-    transformImage.call(this,deg, nx, ny)
+    transformImage.call(this, deg, nx, ny)
 
     return canvas
   }
@@ -140,7 +158,7 @@
     slider.setAttribute('min', 0.01)
     slider.setAttribute('max', 1.5)
     slider.setAttribute('step', 0.000001)
-    slider.style.width = this.options.container.width + 'px'
+    slider.style.width = o.container.width + 'px'
     sliderContainer.appendChild(slider)
     p.wrapper.appendChild(sliderContainer)
   }
@@ -148,8 +166,8 @@
   function createContainer() {
     const container = document.createElement('div')
     container.classList.add('cropme-container')
-    container.style.width = this.options.container.width + 'px'
-    container.style.height = this.options.container.height + 'px'
+    container.style.width = o.container.width + 'px'
+    container.style.height = o.container.height + 'px'
     p.container = container
     p.wrapper.appendChild(container)
   }
@@ -163,10 +181,7 @@
       this.properties = {}
       p = this.properties
       p.wrapper = el
-      this.options = nestedObjectAssign(defaultOptions, options)
-      o = this.options
-      createContainer.call(this)
-      createSlider.call(this)
+      o = p.options = nestedObjectAssign(defaultOptions, options)
       createContext.call(this)
     }
     bind(obj) {
@@ -218,6 +233,8 @@
       p.wrapper.innerHTML = ''
       p.wrapper.className = p.wrapper.className.replace('cropme-wrapper', '');
       delete this.properties
+      console.log(this);
+
 
     }
   }

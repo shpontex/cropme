@@ -9,9 +9,14 @@
     opacity: 0;
 }
 
+#img {
+    border: 5px solid #f00
+}
 .boundary {
     position: absolute;
-    border: 2px solid #fff;
+    border-width: 10px;
+    border-style: solid;
+    border-color: #fff;
     margin: auto;
     top: 0;
     bottom: 0;
