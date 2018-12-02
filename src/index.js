@@ -51,8 +51,8 @@ import './cropme.sass'
     sliderContainer.classList.add('cropme-slider')
     const slider = p.slider = document.createElement('input')
     slider.type = 'range'
-    slider.setAttribute('min', o.scale.min)
-    slider.setAttribute('max', o.scale.max)
+    slider.setAttribute('min', o.zoom.min)
+    slider.setAttribute('max', o.zoom.max)
     slider.setAttribute('step', 0.000001)
     slider.style.width = o.container.width + 'px'
     sliderContainer.appendChild(slider)
@@ -352,7 +352,7 @@ import './cropme.sass'
       width: 100,
       height: 100,
     },
-    scale: {
+    zoom: {
       min: 0.01,
       max: 3
     }
