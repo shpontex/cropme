@@ -3,6 +3,7 @@ const devMode = process.env.NODE_ENV !== 'production'
 
 module.exports = {
   cache: false,
+  watch: true,
   plugins: [
     new MiniCssExtractPlugin({
       filename: "cropme.css",
@@ -13,7 +14,7 @@ module.exports = {
     rules: [{
       test: /\.(sa|sc|c)ss$/,
       use: [
-        devMode ? 'style-loader' : MiniCssExtractPlugin.loader,
+        MiniCssExtractPlugin.loader,
         'css-loader',
         // 'postcss-loader',
         'sass-loader',
