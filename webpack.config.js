@@ -5,7 +5,7 @@ module.exports = {
   cache: false,
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "[name].css",
+      filename: "cropme.css",
       chunkFilename: "[id].css"
     })
   ],
