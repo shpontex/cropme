@@ -51,6 +51,8 @@ import './cropme.sass'
     sliderContainer.classList.add('cropme-slider')
     const slider = p.slider = document.createElement('input')
     slider.type = 'range'
+    console.log(o);
+    
     slider.setAttribute('min', o.zoom.min)
     slider.setAttribute('max', o.zoom.max)
     slider.setAttribute('step', 0.000001)
