@@ -170,9 +170,9 @@ import './cropme.sass'
     })
     let mousewheel = function (e) {
       e.preventDefault()
-      let scale = self.properties.slider.value = self.properties.scale + (e.wheelDelta / 1200 * self.properties.scale)
-      if (scale > self.options.zoom.min && scale < self.options.zoom.max) {
-        self.properties.scale = scale
+      let scale = self.properties.scale + (e.wheelDelta / 1200 * self.properties.scale)
+      if (scale > self.options.zoom.min && scale < self.options.zoom.max && self.options.zoom.mouseWheel) {
+        self.properties.scale = self.properties.slider.value = scale
         self.properties.image.style.transform = transform.call(self)
       }
     }
@@ -372,7 +372,8 @@ import './cropme.sass'
     },
     zoom: {
       min: 0.01,
-      max: 3
+      max: 3,
+      mouseWheel: true
     },
     customClass: ''
   }
