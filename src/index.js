@@ -4,7 +4,7 @@ import './cropme.sass'
   const nestedObjectAssign = require('./polyfills')
   if (window.jQuery) {
     jQuery.fn.cropme = function (options, obj) {
-      
+
       if (typeof options === 'object') {
 
         return this.each(function () {
@@ -49,7 +49,7 @@ import './cropme.sass'
     sliderContainer.classList.add('cropme-slider')
     const slider = this.properties.slider = document.createElement('input')
     slider.type = 'range'
-    
+
     slider.setAttribute('min', this.options.zoom.min)
     slider.setAttribute('max', this.options.zoom.max)
     slider.setAttribute('step', 0.000001)
@@ -101,7 +101,7 @@ import './cropme.sass'
     createSlider.call(this)
     createImage.call(this)
     createViewport.call(this)
-    
+
 
     let x, movex = 0,
       y, movey = 0,
@@ -109,20 +109,21 @@ import './cropme.sass'
 
 
     function setCoordinates(e) {
-      if (e.touches) {
-        let touches = e.touches[0]
-        e.pageX = touches.pageX
-        e.pageY = touches.pageY
-      }
       return e
     }
     let down = function (e) {
       e.preventDefault();
-      e = setCoordinates(e)
+      let pageX = e.pageX
+      let pageY = e.pageY
+      if (e.touches) {
+        let touches = e.touches[0]
+        pageX = touches.pageX
+        pageY = touches.pageY
+      }
       movex = self.properties.x || movex
       movey = self.properties.y || movey
-      x = e.pageX - movex
-      y = e.pageY - movey
+      x = pageX - movex
+      y = pageY - movey
       document.addEventListener('mousemove', move)
       document.addEventListener("touchmove", move);
     }
@@ -131,13 +132,18 @@ import './cropme.sass'
 
     let move = function (e) {
       e.preventDefault();
-      e = setCoordinates(e)
+      let pageX = e.pageX
+      let pageY = e.pageY
+      if (e.touches) {
+        let touches = e.touches[0]
+        pageX = touches.pageX
+        pageY = touches.pageY
+      }
       if (e.touches && e.touches.length > 1) {
         let second_touches = e.touches[1]
-        let touches = e.touches[0]
-        let x = touches.pageX - second_touches.pageX
-        let y = touches.pageY - second_touches.pageY
-        let deg = 90 - Math.atan(x / y) * 180 / Math.PI;
+        let x = pageX - second_touches.pageX
+        let y = pageY - second_touches.pageY
+        let deg = 90 - Math.atan2(x, y) * 180 / Math.PI;
 
         if (!self.properties.odeg) {
           self.properties.odeg = deg - self.properties.deg
@@ -149,9 +155,10 @@ import './cropme.sass'
           self.properties.od = touches_dist / self.properties.scale;
         }
         self.properties.scale = self.properties.slider.value = touches_dist / self.properties.od;
+      } else {
+        self.properties.x = pageX - x
+        self.properties.y = pageY - y
       }
-      self.properties.x = e.pageX - x
-      self.properties.y = e.pageY - y
       self.properties.image.style.transform = transform.call(self)
     }
 
@@ -168,6 +175,7 @@ import './cropme.sass'
       self.properties.scale = parseFloat(e.target.value)
       self.properties.image.style.transform = transform.call(self)
     })
+
     let mousewheel = function (e) {
       e.preventDefault()
       let scale = self.properties.scale + (e.wheelDelta / 1200 * self.properties.scale)
@@ -279,12 +287,14 @@ import './cropme.sass'
       this.properties.wrapper = el
       if (el.tagName.toLowerCase() === 'img') {
         this.properties.image = el
+        el.style.width = null
+        el.style.height = null
         this.properties.wrapper = document.createElement('div')
         el.parentNode.insertBefore(this.properties.wrapper, el.previousSibling);
       }
       this.properties.wrapper.className += 'cropme-wrapper ' + this.options.customClass
       createContext.call(this)
-      
+
       if (this.properties.image.src) {
         this.bind({
           url: this.properties.image.src
@@ -296,41 +306,37 @@ import './cropme.sass'
       let properties = this.properties
       let options = this.options
       let self = this
-      
-      properties.image.onload = function () {
-        let imageData = properties.image.getBoundingClientRect()
-        let containerData = properties.container.getBoundingClientRect()
-        let cx = (containerData.width - imageData.width) / 2
-        let cy = (containerData.height - imageData.height) / 2
-        properties.ox = cx
-        properties.oy = cy
+      let imageData = properties.image.getBoundingClientRect()
+      let containerData = properties.container.getBoundingClientRect()
+      let cx = (containerData.width - imageData.width) / 2
+      let cy = (containerData.height - imageData.height) / 2
+      properties.ox = cx
+      properties.oy = cy
 
-        if (typeof obj.position == 'object') {
-          cx = obj.position.x || cx
-          cy = obj.position.y || cy
-        }
-
-        let scale = obj.scale ? obj.scale : containerData.height / imageData.height
-        if(options.zoom.max <= options.zoom.min) {
-          throw 'Error: max zoom cannot be less or equal to min zoom'
-        }
-        
-        if(scale < options.zoom.min) {
-          scale = options.zoom.min
-        }
-        if( scale > options.zoom.max) {
-          scale = options.zoom.max
-        }
-        
-        properties.x = cx
-        properties.y = cy
-        properties.scale = scale
-        properties.slider.value = scale
-        properties.deg = obj.deg || 0
-        properties.image.style.transform = transform.call(self)
-        properties.image.style.opacity = 1
-
+      if (typeof obj.position == 'object') {
+        cx = obj.position.x || cx
+        cy = obj.position.y || cy
       }
+
+      let scale = obj.scale ? obj.scale : containerData.height / imageData.height
+      if (options.zoom.max <= options.zoom.min) {
+        throw 'Error: max zoom cannot be less or equal to min zoom'
+      }
+
+      if (scale < options.zoom.min) {
+        scale = options.zoom.min
+      }
+      if (scale > options.zoom.max) {
+        scale = options.zoom.max
+      }
+
+      properties.x = cx
+      properties.y = cy
+      properties.scale = scale
+      properties.slider.value = scale
+      properties.deg = obj.deg || 0
+      properties.image.style.transform = transform.call(self)
+      properties.image.style.opacity = 1
     }
     rotate(deg) {
       this.properties.deg = deg
@@ -373,6 +379,7 @@ import './cropme.sass'
     zoom: {
       min: 0.01,
       max: 3,
+      enable: true,
       mouseWheel: true
     },
     customClass: ''
