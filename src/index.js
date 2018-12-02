@@ -169,7 +169,7 @@ import './cropme.sass'
     let mousewheel = function (e) {
       e.preventDefault()
       let scale = p.slider.value = p.scale + (e.wheelDelta / 1200 * p.scale)
-      if (scale >= o.scale.min && scale <= o.scale.max) {
+      if (scale > o.scale.min && scale < o.scale.max) {
         p.scale = scale
         p.image.style.transform = transform()
       }
