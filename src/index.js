@@ -4,7 +4,7 @@ import './cropme.sass'
   const nestedObjectAssign = require('./polyfills')
   if (window.jQuery) {
     jQuery.fn.cropme = function (options, obj) {
-
+      
       if (typeof options === 'object') {
 
         return this.each(function () {
@@ -282,7 +282,7 @@ import './cropme.sass'
         this.properties.wrapper = document.createElement('div')
         el.parentNode.insertBefore(this.properties.wrapper, el.previousSibling);
       }
-      this.properties.wrapper.classList.add('cropme-wrapper')
+      this.properties.wrapper.className += 'cropme-wrapper ' + this.options.customClass
       createContext.call(this)
       
       if (this.properties.image.src) {
@@ -311,6 +311,9 @@ import './cropme.sass'
         }
 
         let scale = obj.scale ? obj.scale : containerData.height / imageData.height
+        if(options.zoom.max <= options.zoom.min) {
+          throw 'Error: max zoom cannot be less or equal to min zoom'
+        }
         
         if(scale < options.zoom.min) {
           scale = options.zoom.min
@@ -351,6 +354,7 @@ import './cropme.sass'
     destroy() {
       this.properties.wrapper.innerHTML = ''
       this.properties.wrapper.className = this.properties.wrapper.className.replace('cropme-wrapper', '');
+      delete this.options
       delete this.properties
 
     }
@@ -369,7 +373,8 @@ import './cropme.sass'
     zoom: {
       min: 0.01,
       max: 3
-    }
+    },
+    customClass: ''
   }
   if (typeof module === "object" && typeof module.exports === "object") {
     module.exports = Cropme
