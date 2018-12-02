@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1 user-scalable=no" >
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!-- <link rel="stylesheet" href="croppie.css"> -->
-    <link rel="stylesheet" href="dist/main.css">
+    <link rel="stylesheet" href="croppie.css">
+    <link rel="stylesheet" href="dist/cropme.css">
     <title>Document</title>
     <style>
         .croppie {
@@ -20,6 +20,7 @@
 <body>
     <input id="range" type="range" min="-180" max='180' value="0">
     <div id="cropme"></div>
+    <img style="width:400px" src="images/guitar.jpeg" id="cropmeimg" alt="">
     <button id="crop">Crop me</button>
     <button id="reset">reset</button>
     <button id="destroy">destroy</button>
@@ -27,31 +28,29 @@
 
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
-    <!-- <script src="croppie.js"></script> -->
+    <script src="croppie.js"></script>
     <script src="dist/main.js"></script>
     <script>
-        var el = $('#cropme').cropme({
+        var el = $('#cropmeimg').cropme({
             container: {
                 width: 300,
                 height: 300,
             },
             viewport: {
-                width: 300,
-                height: 300,
+                width: 200,
+                height: 200,
                 // border: false
                 // type: 'circle'
             },
         })
-        el.cropme('bind', {
-            url: 'pic.jpeg',
-        })
-        document.getElementById('destroy').addEventListener('click', function () {
-            el.cropme('destroy')
-        })
+        // el.cropme('bind', {
+        //     url: 'images/pic.jpeg',
+        // })
+        // document.getElementById('destroy').addEventListener('click', function () {
+        //     el.cropme('destroy')
+        // })
         document.getElementById('crop').addEventListener('click', function () {
             el.cropme('export',{
-                // type: 'blob',
-                // scale: 0.5,
                 width: 800,
             }).then(url => {
                 let img = document.getElementById('img')
@@ -62,8 +61,8 @@
             el.cropme('rotate',e.target.value)
         })
 
-        // let element = document.getElementById('cropme')
-        // const cropme = new Cropme(element, {
+        // let element = document.getElementById('cropmeimg')
+        // const cropme = new Croppie(element, {
         //     container: {
         //         width: 300,
         //         height: 300,
@@ -74,38 +73,36 @@
         //         // type: 'circle'
         //     },
         // })
-        /*
-        cropme.bind({
-            url: 'owndays.png',
-            // position: {
-            //     x: 40,
-            //     y: 116
-            // },
-            // scale: 0.5,
-            // deg: 124
+        // cropme.bind({
+        //     url: 'images/owndays.png',
+        //     // position: {
+        //     //     x: 40,
+        //     //     y: 116
+        //     // },
+        //     // scale: 0.5,
+        //     // deg: 124
 
-            // url: 'simpson.png'
-            // url: 'pic.jpeg'
-            // url: 'guitar.jpg'
-            // url: 'guitar.jpeg'
-            // url: 'bleach.jpg'
-        })
+        //     // url: 'simpson.png'
+        //     // url: 'pic.jpeg'
+        //     // url: 'guitar.jpg'
+        //     // url: 'guitar.jpeg'
+        //     // url: 'bleach.jpg'
+        // })
 
-        document.getElementById('crop').addEventListener('click', function () {
-            let el = document.getElementById('img')
-            cropme.export().then(url => {
-                el.src = url
-            })
-            console.log(cropme.position());
-        })
-        document.getElementById('range').addEventListener('input', function (e) {
+        // document.getElementById('crop').addEventListener('click', function () {
+        //     let el = document.getElementById('img')
+        //     cropme.export().then(url => {
+        //         el.src = url
+        //     })
+        //     console.log(cropme.position());
+        // })
+        // document.getElementById('range').addEventListener('input', function (e) {
             
-            cropme.rotate(e.target.value)
-        })
-        document.getElementById('reset').addEventListener('click', function (e) {
-            cropme.rotate(0)
-        })
-        */
+        //     cropme.rotate(e.target.value)
+        // })
+        // document.getElementById('reset').addEventListener('click', function (e) {
+        //     cropme.rotate(0)
+        // })
     </script>
 </body>
 

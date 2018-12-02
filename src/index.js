@@ -1,7 +1,7 @@
 import './cropme.sass'
 
 (function (global) {
-  const objectAssign = require('./polyfills')
+  const nestedObjectAssign = require('./polyfills')
   var o, p
 
   if (window.jQuery) {
@@ -41,6 +41,7 @@ import './cropme.sass'
       }
     }
   }
+
   function transform() {
     return 'translate(' + p.x + 'px,' + p.y + 'px) scale(' + p.scale + ') rotate(' + p.deg + 'deg)'
   }
@@ -50,8 +51,8 @@ import './cropme.sass'
     sliderContainer.classList.add('cropme-slider')
     const slider = p.slider = document.createElement('input')
     slider.type = 'range'
-    slider.setAttribute('min', 0.01)
-    slider.setAttribute('max', 1.5)
+    slider.setAttribute('min', o.scale.min)
+    slider.setAttribute('max', o.scale.max)
     slider.setAttribute('step', 0.000001)
     slider.style.width = o.container.width + 'px'
     sliderContainer.appendChild(slider)
@@ -68,9 +69,11 @@ import './cropme.sass'
   }
 
   function createImage() {
-    const image = p.image = document.createElement('img')
-    image.ondragstart = () => false
-    p.container.appendChild(image)
+    if (!p.image) {
+      p.image = document.createElement('img')
+    }
+    p.image.ondragstart = () => false
+    p.container.appendChild(p.image)
   }
 
   function createViewport() {
@@ -165,8 +168,11 @@ import './cropme.sass'
     })
     let mousewheel = function (e) {
       e.preventDefault()
-      p.scale = p.slider.value = p.scale + (e.wheelDelta / 1200 * p.scale)
-      p.image.style.transform = transform()
+      let scale = p.slider.value = p.scale + (e.wheelDelta / 1200 * p.scale)
+      if (scale >= o.scale.min && scale <= o.scale.max) {
+        p.scale = scale
+        p.image.style.transform = transform()
+      }
     }
     p.container.addEventListener('mousewheel', mousewheel)
   }
@@ -266,12 +272,22 @@ import './cropme.sass'
       if (el.className.indexOf('cropme-wrapper') > -1) {
         throw 'Error: Cropme is already initialized'
       }
-      el.classList.add('cropme-wrapper')
       this.properties = {}
       p = this.properties
+      o = p.options = nestedObjectAssign(defaultOptions, options)
       p.wrapper = el
-      o = p.options = objectAssign(defaultOptions, options)
+      if (el.tagName.toLowerCase() === 'img') {
+        p.image = el
+        p.wrapper = document.createElement('div')
+        el.parentNode.insertBefore(p.wrapper, el.previousSibling);
+      }
+      p.wrapper.classList.add('cropme-wrapper')
       createContext.call(this)
+      if (p.image.src) {
+        this.bind({
+          url: p.image.src
+        })
+      }
     }
     bind(obj) {
       p.image.src = obj.url
@@ -336,11 +352,15 @@ import './cropme.sass'
       width: 100,
       height: 100,
     },
+    scale: {
+      min: 0.01,
+      max: 3
+    }
   }
   if (typeof module === "object" && typeof module.exports === "object") {
     module.exports = Cropme
   } else if (typeof define === 'function' && define.amd) {
-    define([], function(){
+    define([], function () {
       return Cropme
     });
   } else {
