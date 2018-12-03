@@ -39,9 +39,9 @@
             },
             viewport: {
                 width: 200,
-                height: 200,
+                height: 100,
                 // border: false
-                // type: 'circle'
+                type: 'circle'
             },
             zoom: {
                 // min: 1,
@@ -54,6 +54,7 @@
         // el.cropme('bind', {
         //     url: 'images/pic.jpeg',
         // })
+        
         document.getElementById('destroy').addEventListener('click', function () {
             el.cropme('destroy')
         })
