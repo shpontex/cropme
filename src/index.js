@@ -69,7 +69,7 @@ import './cropme.sass'
 
   function createImage() {
     if (!this.properties.image) {
-      this.properties.image = document.createElement('img')
+      this.properties.image = new Image()
     }
     this.properties.image.ondragstart = () => false
     this.properties.container.appendChild(this.properties.image)
@@ -86,13 +86,13 @@ import './cropme.sass'
     if (options.viewport.type === 'circle') {
       viewport.className = 'viewport circle'
     }
-    let border = 0;
-    if (options.viewport.border) {
+
+    if (options.viewport.border.enable) {
       let viewport_border = (options.container.width - options.viewport.width) / 2
-      border = viewport_border < this.properties.viewport.clientLeft ? viewport_border : this.properties.viewport.clientLeft
+      options.viewport.border.width = viewport_border < options.viewport.border.width ? viewport_border : options.viewport.border.width
     }
-    this.properties.viewport.style.borderWidth = border + 'px'
-    this.properties.viewport.border = border
+
+    this.properties.viewport.style.borderWidth = options.viewport.border.width + 'px'
     this.properties.container.appendChild(viewport)
   }
 
@@ -108,9 +108,6 @@ import './cropme.sass'
       self = this
 
 
-    function setCoordinates(e) {
-      return e
-    }
     let down = function (e) {
       e.preventDefault();
       let pageX = e.pageX
@@ -227,8 +224,8 @@ import './cropme.sass'
     const imageData = this.properties.image.getBoundingClientRect()
     const viewportData = this.properties.viewport.getBoundingClientRect()
 
-    const x = xs * (imageData.x - viewportData.x - this.properties.viewport.border)
-    const y = ys * (imageData.y - viewportData.y - this.properties.viewport.border)
+    const x = xs * (imageData.x - viewportData.x - this.options.viewport.border.width)
+    const y = ys * (imageData.y - viewportData.y - this.options.viewport.border.width)
     if (deg !== 0) {
       ctx.translate((nx - this.properties.x) * xs, (ny - this.properties.y) * ys)
       ctx.translate(width / 2, height / 2);
@@ -286,11 +283,11 @@ import './cropme.sass'
       this.options = nestedObjectAssign(defaultOptions, options)
       this.properties.wrapper = el
       if (el.tagName.toLowerCase() === 'img') {
-        this.properties.image = el
-        el.style.width = null
-        el.style.height = null
+        this.properties.image = new Image()
+        this.properties.image.src = el.src
         this.properties.wrapper = document.createElement('div')
         el.parentNode.insertBefore(this.properties.wrapper, el.previousSibling);
+        el.parentNode.removeChild(el)
       }
       this.properties.wrapper.className += 'cropme-wrapper ' + this.options.customClass
       createContext.call(this)
@@ -306,37 +303,41 @@ import './cropme.sass'
       let properties = this.properties
       let options = this.options
       let self = this
-      let imageData = properties.image.getBoundingClientRect()
-      let containerData = properties.container.getBoundingClientRect()
-      let cx = (containerData.width - imageData.width) / 2
-      let cy = (containerData.height - imageData.height) / 2
-      properties.ox = cx
-      properties.oy = cy
+      this.properties.image.onload = function () {
+          
+        let imageData = properties.image.getBoundingClientRect()
+        let containerData = properties.container.getBoundingClientRect()
+        let cx = (containerData.width - imageData.width) / 2
+        let cy = (containerData.height - imageData.height) / 2
+        properties.ox = cx
+        properties.oy = cy
 
-      if (typeof obj.position == 'object') {
-        cx = obj.position.x || cx
-        cy = obj.position.y || cy
-      }
+        if (typeof obj.position == 'object') {
+          cx = obj.position.x || cx
+          cy = obj.position.y || cy
+        }
 
-      let scale = obj.scale ? obj.scale : containerData.height / imageData.height
-      if (options.zoom.max <= options.zoom.min) {
-        throw 'Error: max zoom cannot be less or equal to min zoom'
-      }
+        let scale = obj.scale ? obj.scale : containerData.height / imageData.height
+        if (options.zoom.max <= options.zoom.min) {
+          throw 'Error: max zoom cannot be less or equal to min zoom'
+        }
 
-      if (scale < options.zoom.min) {
-        scale = options.zoom.min
-      }
-      if (scale > options.zoom.max) {
-        scale = options.zoom.max
-      }
+        if (scale < options.zoom.min) {
+          scale = options.zoom.min
+        }
+        if (scale > options.zoom.max) {
+          scale = options.zoom.max
+        }
 
-      properties.x = cx
-      properties.y = cy
-      properties.scale = scale
-      properties.slider.value = scale
-      properties.deg = obj.deg || 0
-      properties.image.style.transform = transform.call(self)
-      properties.image.style.opacity = 1
+
+        properties.x = cx
+        properties.y = cy
+        properties.scale = scale
+        properties.slider.value = scale
+        properties.deg = obj.deg || 0
+        properties.image.style.transform = transform.call(self)
+        properties.image.style.opacity = 1
+      }
     }
     rotate(deg) {
       this.properties.deg = deg
@@ -375,6 +376,10 @@ import './cropme.sass'
     viewport: {
       width: 100,
       height: 100,
+      border: {
+        enable: true,
+        width: 2
+      }
     },
     zoom: {
       min: 0.01,
@@ -382,8 +387,9 @@ import './cropme.sass'
       enable: true,
       mouseWheel: true
     },
-    customClass: ''
+    customClass: '',
   }
+
   if (typeof module === "object" && typeof module.exports === "object") {
     module.exports = Cropme
   } else if (typeof define === 'function' && define.amd) {

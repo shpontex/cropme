@@ -32,16 +32,19 @@
     <script src="croppie.js"></script>
     <script src="dist/main.js"></script>
     <script>
-        var el = $('.cropmeimg').cropme({
+        var el = $('#cropme').cropme({
             container: {
                 width: 300,
                 height: 300,
             },
             viewport: {
                 width: 200,
-                height: 100,
-                // border: false
-                type: 'circle'
+                height: 200,
+                border: {
+                    // enable: false,
+                    width: 30
+                }
+                // type: 'circle'
             },
             zoom: {
                 // min: 1,
@@ -51,9 +54,9 @@
             // customClass: 'mycustom classs'
         })
         
-        // el.cropme('bind', {
-        //     url: 'images/pic.jpeg',
-        // })
+        el.cropme('bind', {
+            url: 'images/pic.jpeg',
+        })
         
         document.getElementById('destroy').addEventListener('click', function () {
             el.cropme('destroy')
