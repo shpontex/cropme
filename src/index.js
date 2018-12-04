@@ -394,7 +394,7 @@ import './cropme.sass'
       max: 3,
       enable: true,
       mouseWheel: true,
-      slider: true
+      slider: false
     },
     customClass: '',
   }
