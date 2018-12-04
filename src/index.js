@@ -90,15 +90,18 @@ import './cropme.sass'
     if (options.viewport.border.enable) {
       let viewport_border = (options.container.width - options.viewport.width) / 2
       options.viewport.border.width = viewport_border < options.viewport.border.width ? viewport_border : options.viewport.border.width
+    } else {
+      options.viewport.border.width = 0
     }
 
     this.properties.viewport.style.borderWidth = options.viewport.border.width + 'px'
+    this.properties.viewport.style.borderColor = options.viewport.border.color
     this.properties.container.appendChild(viewport)
   }
 
   function createContext() {
     createContainer.call(this)
-    createSlider.call(this)
+      createSlider.call(this)
     createImage.call(this)
     createViewport.call(this)
 
@@ -182,6 +185,10 @@ import './cropme.sass'
       }
     }
     self.properties.container.addEventListener('mousewheel', mousewheel)
+    if (!self.options.zoom.slider) {
+      let slider = this.properties.slider.parentNode
+      self.properties.wrapper.removeChild(slider)
+    }
   }
 
   function createCanvas(options) {
@@ -304,7 +311,7 @@ import './cropme.sass'
       let options = this.options
       let self = this
       this.properties.image.onload = function () {
-          
+
         let imageData = properties.image.getBoundingClientRect()
         let containerData = properties.container.getBoundingClientRect()
         let cx = (containerData.width - imageData.width) / 2
@@ -378,14 +385,16 @@ import './cropme.sass'
       height: 100,
       border: {
         enable: true,
-        width: 2
+        width: 2,
+        color: '#fff'
       }
     },
     zoom: {
       min: 0.01,
       max: 3,
       enable: true,
-      mouseWheel: true
+      mouseWheel: true,
+      slider: true
     },
     customClass: '',
   }
