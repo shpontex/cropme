@@ -1,135 +1,126 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1 user-scalable=no" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1 user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="croppie.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
     <link rel="stylesheet" href="dist/cropme.css">
-    <title>Document</title>
-    <style>
-        .croppie {
-            width: 300;
-            height: 300
-        }
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <title>Cropme | a javascript image cropper</title>
     </style>
 </head>
 
 <body>
-    <input id="range" type="range" min="-180" max='180' value="0">
-    <div id="cropme"></div>
-    <!-- <img style="width:400px;opacity:0" id="gtr" src="images/guitar.jpeg" class="cropmeimg" alt="">
-    <img style="width:400px" id="pic" src="images/pic.jpeg" class="cropmeimg" alt=""> -->
-    <button id="crop">Crop me</button>
-    <button id="reset">reset</button>
-    <button id="destroy">destroy</button>
-    <img style="max-height:300px" id="img">
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#">
+            <svg height="32" viewBox="0 0 16 16" version="1.1" width="32" aria-hidden="true">
+                <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+            </svg>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
-    <script src="croppie.js"></script>
-    <script src="dist/main.js"></script>
-    <script>
-        // var croppie = $('.cropmeimg').croppie({
-        //     boundary: {
-        //         width: 300,
-        //         height: 300
-        //     },
-        //     viewport: {
-        //         width: 200,
-        //         height: 200
-        //     },
-        //     showZoomer: false
-        // })
-        var el = $('#cropme').cropme({
-            container: {
-                width: 300,
-                height: 300,
-            },
-            viewport: {
-                width: 200,
-                height: 200,
-                border: {
-                    // enable: false,
-                    // width: 10,
-                    // color: '#f00'
-                }
-                // type: 'circle'
-            },
-            zoom: {
-                // enable: false,
-                // slider: false
-                // min: 1,
-                // max: 5,
-                // mouseWheel: false
-            },
-            // customClass: 'mycustom classs'
-        })
-        
-        el.cropme('bind', {
-            url: 'images/pic.jpeg',
-        })
-        
-        document.getElementById('destroy').addEventListener('click', function () {
-            el.cropme('destroy')
-        })
-        document.getElementById('crop').addEventListener('click', function () {
-            el.cropme('export',{
-                width: 800,
-            }).then(url => {
-                let img = document.getElementById('img')
-                img.src = url
-            })
-        })
-        document.getElementById('range').addEventListener('input', function (e) {
-            el.cropme('rotate',e.target.value)
-        })
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Usage <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Documentaion</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Demos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-        // let element = document.getElementById('gtr')
-        // const cropme = new Cropme(element, {
-        //     container: {
-        //         width: 300,
-        //         height: 300,
-        //     },
-        //     viewport: {
-        //         width: 150,
-        //         height: 150,
-        //         // type: 'circle'
-        //     },
-        // })
-        // cropme.bind({
-        //     url: 'images/owndays.png',
-            // position: {
-            //     x: 40,
-            //     y: 116
-            // },
-            // scale: 0.5,
-            // deg: 124
+    <section class="py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 d-flex align-items-center">
+                    <div class="description">
+                        <h1 class="display-4">Cropme</h1>
+                        <p>Cropme is a customizable and easy to use javascript image cropping plugin </p>
+                        <button class="btn btn-outline-danger" id="crop">Crop me</button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div id="cropme"></div>
+                    <!-- Modal -->
+                    <div class="modal fade" id="cropmeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Cropme result</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <img id="cropme-result" src="" alt="cropme">
+                                </div>
 
-            // url: 'simpson.png'
-            // url: 'pic.jpeg'
-            // url: 'guitar.jpg'
-            // url: 'guitar.jpeg'
-            // url: 'bleach.jpg'
-        // })
+                            </div>
+                        </div>
+                    </div>
 
-        // document.getElementById('crop').addEventListener('click', function () {
-        //     let el = document.getElementById('img')
-        //     cropme.export().then(url => {
-        //         el.src = url
-        //     })
-        //     console.log(cropme.position());
-        // })
-        // document.getElementById('range').addEventListener('input', function (e) {
-            
-        //     cropme.rotate(e.target.value)
-        // })
-        // document.getElementById('reset').addEventListener('click', function (e) {
-        //     cropme.rotate(0)
-        // })
-    </script>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="installation">
+        <div class="bg-danger text-white">
+            <div class="container">
+                <h2 class="display-4">Installation</h2>
+            </div>
+        </div>
+        <div class="container py-3">
+            <div>
+                <p class="pl-2">npm: <span class="badge badge-light">npm install cropme</span></p>
+                <p class="pl-2">download <a href="">source.zip</a></p>
+                <pre><code class="html">&lt;link rel=&quot;stylesheet&quot; href=&quot;croppie.css&quot; /&gt;
+&lt;script src=&quot;croppie.js&quot;&gt;&lt;/script&gt; </code></pre>
+            </div>
+        </div>
+    </section>
+    <section class="usage">
+        <div class="bg-danger text-white">
+            <div class="container">
+                <h2 class="display-4">Usage</h2>
+            </div>
+        </div>
+        <div class="container py-3">
+            <p class="mb-2">vanilla javascript example</p>
+            <pre><code class="javascript">var el = document.getElementById('cropme')
+var cropme = new Cropme(el, options)
+cropme.method(options) </code></pre>
+            <p class="mb-2">jquery example</p>
+            <pre><code class="javascript">var el = $('#cropme')
+el.cropme(el, options)
+el.cropme('method',options) </code></pre>
+        </div>
+    </section>
+    <script src="dist/cropme.js"></script>
+    <script src="js/app.js"></script>
 </body>
 
 </html>
