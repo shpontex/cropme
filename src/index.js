@@ -129,7 +129,6 @@ import './cropme.sass'
       movey = self.properties.y || movey
       x = pageX - movex
       y = pageY - movey
-      console.log(x,y);
       
       document.addEventListener('mousemove', move)
       document.addEventListener("touchmove", move);
@@ -163,19 +162,26 @@ import './cropme.sass'
         }
         self.properties.scale = self.properties.slider.value = touches_dist / self.properties.od;
       } else {
-        self.properties.nx = pageX - x
-        self.properties.ny = pageY - y
+        self.properties.x = pageX - x
+        self.properties.y = pageY - y
         
-        diffx = (self.properties.ox - self.properties.nx)
-        diffy = (self.properties.oy - self.properties.ny)
-
-        let origin_x = self.properties.image.width / 2 -diffx
-        let origin_y = self.properties.image.height / 2 -diffy
+        
+      //   diffx = (self.properties.ox - self.properties.x)
+      //   diffy = (self.properties.oy - self.properties.y)
+        
+        
+      //  let imageData = self.properties.image.getBoundingClientRect() 
+        
+        
+      //   let origin_x = self.properties.image.width /  2 - diffx * ( 1 + self.properties.scale)
+      //   let origin_y = self.properties.image.height / 2 - diffy* ( 1 + self.properties.scale)
+        
+        
         
 
-        self.properties.image.style.transformOrigin = transformOrigin.call(self, origin_x, origin_y)
+      //   self.properties.image.style.transformOrigin = transformOrigin.call(self, origin_x, origin_y)
       }
-      // self.properties.image.style.transform = transform.call(self)
+      self.properties.image.style.transform = transform.call(self)
     }
 
     let up = function () {
@@ -183,6 +189,25 @@ import './cropme.sass'
       document.removeEventListener('mousemove', move);
       self.properties.od = 0;
       self.properties.odeg = 0;
+      let scale = self.properties.scale
+         diffx = (self.properties.ox - self.properties.x) / scale
+         diffy = (self.properties.oy - self.properties.y) / scale
+         let xx = self.properties.image.width / 2
+         let yy = self.properties.image.height / 2
+         self.properties.origin_x = self.properties.origin_x + diffx
+         self.properties.origin_y = self.properties.origin_y + diffy
+         // origin change ok
+         self.properties.image.style.transformOrigin = transformOrigin.call(self, self.properties.origin_x, self.properties.origin_y)
+         
+         let newx = self.options.container.width / 2 - (xx + diffx)
+         let newy = self.options.container.height / 2 - (yy + diffy)
+         self.properties.x = newx
+         self.properties.y = newy
+         
+         
+      self.properties.image.style.transform = transform.call(self)
+         
+      //   diffy = (self.properties.oy - self.properties.y)
     }
     document.addEventListener('mouseup', up)
     document.addEventListener("touchend", up);
@@ -355,18 +380,17 @@ import './cropme.sass'
         }
 
 
-        let ccx = imageData.width
-        let ccy = 0
-
-        properties.x = 0
-        properties.y = 0
+        properties.x = cx
+        properties.y = cy
         
+        properties.origin_x = imageData.width / 2
+        properties.origin_y = imageData.height / 2
         
         properties.scale = scale
         properties.slider.value = scale
         properties.deg = obj.deg || 0
         properties.image.style.transform = transform.call(self)
-        properties.image.style.transformOrigin = transformOrigin.call(self,  imageData.width*scale / 2,imageData.height*scale/2)
+        properties.image.style.transformOrigin = transformOrigin.call(self, properties.origin_x,properties.origin_y)
         properties.image.style.opacity = 1
       }
     }
