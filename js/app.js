@@ -15,7 +15,7 @@ var cropme = new Cropme(el, {
     }
 })
 cropme.bind({
-    url: '/images/pic.jpeg'
+    url: '/images/owndays.png'
 })
 
 var cropButton = document.getElementById('crop')
