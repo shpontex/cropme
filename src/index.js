@@ -358,15 +358,15 @@ import './cropme.sass'
         let ccx = imageData.width
         let ccy = 0
 
-        properties.x = ccx - imageData.width + containerData.width / 2
-        properties.y = cy
+        properties.x = 0
+        properties.y = 0
         
         
         properties.scale = scale
         properties.slider.value = scale
         properties.deg = obj.deg || 0
-        properties.image.style.transformOrigin = transformOrigin.call(self,  ccx,0)
         properties.image.style.transform = transform.call(self)
+        properties.image.style.transformOrigin = transformOrigin.call(self,  imageData.width*scale / 2,imageData.height*scale/2)
         properties.image.style.opacity = 1
       }
     }
