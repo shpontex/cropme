@@ -129,7 +129,7 @@ import './cropme.sass'
       movey = self.properties.y || movey
       x = pageX - movex
       y = pageY - movey
-      
+
       document.addEventListener('mousemove', move)
       document.addEventListener("touchmove", move);
     }
@@ -164,22 +164,6 @@ import './cropme.sass'
       } else {
         self.properties.x = pageX - x
         self.properties.y = pageY - y
-        
-        
-      //   diffx = (self.properties.ox - self.properties.x)
-      //   diffy = (self.properties.oy - self.properties.y)
-        
-        
-      //  let imageData = self.properties.image.getBoundingClientRect() 
-        
-        
-      //   let origin_x = self.properties.image.width /  2 - diffx * ( 1 + self.properties.scale)
-      //   let origin_y = self.properties.image.height / 2 - diffy* ( 1 + self.properties.scale)
-        
-        
-        
-
-      //   self.properties.image.style.transformOrigin = transformOrigin.call(self, origin_x, origin_y)
       }
       self.properties.image.style.transform = transform.call(self)
     }
@@ -189,25 +173,40 @@ import './cropme.sass'
       document.removeEventListener('mousemove', move);
       self.properties.od = 0;
       self.properties.odeg = 0;
-      let scale = self.properties.scale
-         diffx = (self.properties.ox - self.properties.x) / scale
-         diffy = (self.properties.oy - self.properties.y) / scale
-         let xx = self.properties.image.width / 2
-         let yy = self.properties.image.height / 2
-         self.properties.origin_x = self.properties.origin_x + diffx
-         self.properties.origin_y = self.properties.origin_y + diffy
-         // origin change ok
-         self.properties.image.style.transformOrigin = transformOrigin.call(self, self.properties.origin_x, self.properties.origin_y)
-         
-         let newx = self.options.container.width / 2 - (xx + diffx)
-         let newy = self.options.container.height / 2 - (yy + diffy)
-         self.properties.x = newx
-         self.properties.y = newy
-         
-         
-      self.properties.image.style.transform = transform.call(self)
-         
-      //   diffy = (self.properties.oy - self.properties.y)
+
+      let scale = self.properties.scale,
+        imageData = self.properties.image.getBoundingClientRect(),
+        viewportData = self.properties.viewport.getBoundingClientRect(),
+        top = (viewportData.top - imageData.top) + (viewportData.height / 2),
+        left = (viewportData.left - imageData.left) + (viewportData.width / 2),
+        origin = self.properties.image.style.transformOrigin.split('px '),
+        cx,
+        cy
+      let ox = parseInt(origin[0])
+      let oy = parseInt(origin[1])
+
+      if (self.properties.deg) {
+        // var crx = ox;
+        // var cry = oy;
+        // var tx = self.properties.x;
+        // var ty = self.properties.y;
+
+        // cy = crx;
+        // cx = cry;
+        // self.properties.y = tx;
+        // self.properties.x = ty;
+      } else {
+        // change origin form not rotate ----------------------
+
+        // cx = left / scale;
+        // cy = top / scale;
+
+        // self.properties.x -= (cx - ox) * (1 - scale);
+        // self.properties.y -= (cy - oy) * (1 - scale);
+        // self.properties.image.style.transformOrigin = transformOrigin.call(self, cx, cy)
+        // self.properties.image.style.transform = transform.call(self)
+      }
+
     }
     document.addEventListener('mouseup', up)
     document.addEventListener("touchend", up);
@@ -221,8 +220,8 @@ import './cropme.sass'
       e.preventDefault()
       let scale = self.properties.scale + (e.wheelDelta / 1200 * self.properties.scale)
       if (scale > self.options.zoom.min && scale < self.options.zoom.max && self.options.zoom.mouseWheel) {
-        console.log(self.properties.x,self.properties.y);
-        
+        console.log(self.properties.x, self.properties.y);
+
         self.properties.scale = self.properties.slider.value = scale
         self.properties.image.style.transform = transform.call(self)
       }
@@ -382,15 +381,15 @@ import './cropme.sass'
 
         properties.x = cx
         properties.y = cy
-        
+
         properties.origin_x = imageData.width / 2
         properties.origin_y = imageData.height / 2
-        
+
         properties.scale = scale
         properties.slider.value = scale
         properties.deg = obj.deg || 0
         properties.image.style.transform = transform.call(self)
-        properties.image.style.transformOrigin = transformOrigin.call(self, properties.origin_x,properties.origin_y)
+        properties.image.style.transformOrigin = transformOrigin.call(self, properties.origin_x, properties.origin_y)
         properties.image.style.opacity = 1
       }
     }

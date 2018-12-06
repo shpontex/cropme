@@ -28,3 +28,8 @@ cropButton.addEventListener('click', function () {
         $('#cropmeModal').modal()
     })
 })
+let rotate = document.getElementById('rotate')
+rotate.addEventListener('input',function(e){
+    cropme.rotate(e.target.value)
+    
+})
