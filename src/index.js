@@ -185,7 +185,21 @@ import './cropme.sass'
       let ox = parseInt(origin[0])
       let oy = parseInt(origin[1])
 
-      if (self.properties.deg) {
+      let angle = self.properties.deg
+        cx = left / scale;
+        cy = top / scale;
+      if (angle) {
+        let y = self.properties.image.height - oy
+        let dottob = Math.sqrt(Math.pow(ox,2) + Math.pow(y,2))
+        let addedx = dottob * Math.cos(angle) - ox
+        console.log(angle,addedx);
+        
+        // let width = Math.abs(imageData.width * Math.cos(angle)) + Math.abs(imageData.height * Math.sin(angle));
+        // let height = Math.abs(imageData.width * Math.sin(angle)) + Math.abs(imageData.height * Math.cos(angle));
+        let angx = 90 - angle
+        let ab = ox - imageData.left
+        
+        
         // var crx = ox;
         // var cry = oy;
         // var tx = self.properties.x;
@@ -198,13 +212,11 @@ import './cropme.sass'
       } else {
         // change origin form not rotate ----------------------
 
-        // cx = left / scale;
-        // cy = top / scale;
+        self.properties.image.style.transformOrigin = transformOrigin.call(self, cx, cy)
 
-        // self.properties.x -= (cx - ox) * (1 - scale);
-        // self.properties.y -= (cy - oy) * (1 - scale);
-        // self.properties.image.style.transformOrigin = transformOrigin.call(self, cx, cy)
-        // self.properties.image.style.transform = transform.call(self)
+        self.properties.x -= (cx - ox) * (1 - scale);
+        self.properties.y -= (cy - oy) * (1 - scale);
+        self.properties.image.style.transform = transform.call(self)
       }
 
     }
@@ -220,7 +232,6 @@ import './cropme.sass'
       e.preventDefault()
       let scale = self.properties.scale + (e.wheelDelta / 1200 * self.properties.scale)
       if (scale > self.options.zoom.min && scale < self.options.zoom.max && self.options.zoom.mouseWheel) {
-        console.log(self.properties.x, self.properties.y);
 
         self.properties.scale = self.properties.slider.value = scale
         self.properties.image.style.transform = transform.call(self)
