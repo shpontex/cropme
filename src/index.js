@@ -185,39 +185,52 @@ import './cropme.sass'
       let ox = parseInt(origin[0])
       let oy = parseInt(origin[1])
 
-      let angle = self.properties.deg
-        cx = left / scale;
-        cy = top / scale;
+
+      let angle = -parseInt(self.properties.deg) * Math.PI / 180
+      let deg = -parseInt(self.properties.deg)
+      cx = left / scale;
+      cy = top / scale;
+
+
       if (angle) {
-        let y = self.properties.image.height - oy
-        let dottob = Math.sqrt(Math.pow(ox,2) + Math.pow(y,2))
-        let addedx = dottob * Math.cos(angle) - ox
-        console.log(angle,addedx);
-        
-        // let width = Math.abs(imageData.width * Math.cos(angle)) + Math.abs(imageData.height * Math.sin(angle));
-        // let height = Math.abs(imageData.width * Math.sin(angle)) + Math.abs(imageData.height * Math.cos(angle));
-        let angx = 90 - angle
-        let ab = ox - imageData.left
-        
-        
-        // var crx = ox;
-        // var cry = oy;
-        // var tx = self.properties.x;
-        // var ty = self.properties.y;
+        let old_originx = self.properties.rotate_originx
+        let old_originy = self.properties.rotate_originy
+        let nx = 0 - old_originx
+        let ny = 0 - old_originy
 
-        // cy = crx;
-        // cx = cry;
-        // self.properties.y = tx;
-        // self.properties.x = ty;
+
+
+        let x = nx * Math.cos(angle) - ny * Math.sin(angle)
+        let y = nx * Math.sin(angle) + ny * Math.cos(angle)
+        let diffx = nx - x
+        let diffy = ny - y
+
+        if (deg < 0 && deg > -90) {
+          cx = cx - diffx
+          cy = cy - diffx
+        }
+        if (deg < -90 && deg > -180) {
+          cx = cx + (200 + diffy)
+          cy = cy + (200 + diffy)
+        }
+        if (deg < 180 && deg > 90) {
+          cx = cx + (200 + diffx)
+          cy = cy + (200 + diffx)
+        }
+        if (deg < 90 && deg > 0) {
+          cx = cx - diffy
+          cy = cy - diffy
+        }
+
+        self.properties.rotate_originx = cx
+        self.properties.rotate_originy = cy
+
       } else {
-        // change origin form not rotate ----------------------
-
-        self.properties.image.style.transformOrigin = transformOrigin.call(self, cx, cy)
-
         self.properties.x -= (cx - ox) * (1 - scale);
         self.properties.y -= (cy - oy) * (1 - scale);
-        self.properties.image.style.transform = transform.call(self)
       }
+      self.properties.image.style.transformOrigin = transformOrigin.call(self, cx, cy)
+      self.properties.image.style.transform = transform.call(self)
 
     }
     document.addEventListener('mouseup', up)
@@ -406,6 +419,11 @@ import './cropme.sass'
     }
     rotate(deg) {
       this.properties.deg = deg
+      let origin = this.properties.image.style.transformOrigin.split('px ')
+      let ox = parseInt(origin[0])
+      let oy = parseInt(origin[1])
+      this.properties.rotate_originx = ox
+      this.properties.rotate_originy = oy
       this.properties.image.style.transform = transform.call(this)
     }
     export (options) {
