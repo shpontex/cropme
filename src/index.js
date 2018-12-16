@@ -44,6 +44,10 @@ import './cropme.sass'
     return 'translate(' + this.properties.x + 'px,' + this.properties.y + 'px) scale(' + this.properties.scale + ') rotate(' + this.properties.deg + 'deg)'
   }
 
+  function transformOrigin(x, y) {
+    return x + 'px ' + y + 'px'
+  }
+
   function createSlider() {
     const sliderContainer = document.createElement('div')
     sliderContainer.classList.add('cropme-slider')
@@ -101,7 +105,7 @@ import './cropme.sass'
 
   function createContext() {
     createContainer.call(this)
-      createSlider.call(this)
+    createSlider.call(this)
     createImage.call(this)
     createViewport.call(this)
 
@@ -124,6 +128,7 @@ import './cropme.sass'
       movey = self.properties.y || movey
       x = pageX - movex
       y = pageY - movey
+
       document.addEventListener('mousemove', move)
       document.addEventListener("touchmove", move);
     }
@@ -167,6 +172,64 @@ import './cropme.sass'
       document.removeEventListener('mousemove', move);
       self.properties.od = 0;
       self.properties.odeg = 0;
+
+      let scale = self.properties.scale,
+        imageData = self.properties.image.getBoundingClientRect(),
+        viewportData = self.properties.viewport.getBoundingClientRect(),
+        top = (viewportData.top - imageData.top) + (viewportData.height / 2),
+        left = (viewportData.left - imageData.left) + (viewportData.width / 2),
+        origin = self.properties.image.style.transformOrigin.split('px '),
+        cx,
+        cy
+      let ox = parseInt(origin[0])
+      let oy = parseInt(origin[1])
+
+
+      let angle = -parseInt(self.properties.deg) * Math.PI / 180
+      // let deg = -parseInt(self.properties.deg)
+      cx = left / scale;
+      cy = top / scale;
+
+
+      if (angle) {
+        // let old_originx = self.properties.rotate_originx
+        // let old_originy = self.properties.rotate_originy
+        // let nx = 0 - old_originx
+        // let ny = 0 - old_originy
+
+        // let x = nx * Math.cos(angle) - ny * Math.sin(angle)
+        // let y = nx * Math.sin(angle) + ny * Math.cos(angle)
+        // let diffx = nx - x
+        // let diffy = ny - y
+
+        // if (deg < 0 && deg > -90) {
+        //   cx = cx - diffx
+        //   cy = cy - diffx
+        // }
+        // if (deg < -90 && deg > -180) {
+        //   cx = cx + (200 + diffy)
+        //   cy = cy + (200 + diffy)
+        // }
+        // if (deg < 180 && deg > 90) {
+        //   cx = cx + (200 + diffx)
+        //   cy = cy + (200 + diffx)
+        // }
+        // if (deg < 90 && deg > 0) {
+        //   cx = cx - diffy
+        //   cy = cy - diffy
+        // }
+
+        // self.properties.rotate_originx = cx
+        // self.properties.rotate_originy = cy
+
+      } else {
+        // Set the origin
+        self.properties.x -= (cx - ox) * (1 - scale);
+        self.properties.y -= (cy - oy) * (1 - scale);
+        self.properties.image.style.transformOrigin = transformOrigin.call(self, cx, cy)
+        self.properties.image.style.transform = transform.call(self)
+      }
+
     }
     document.addEventListener('mouseup', up)
     document.addEventListener("touchend", up);
@@ -180,6 +243,7 @@ import './cropme.sass'
       e.preventDefault()
       let scale = self.properties.scale + (e.wheelDelta / 1200 * self.properties.scale)
       if (scale > self.options.zoom.min && scale < self.options.zoom.max && self.options.zoom.mouseWheel) {
+
         self.properties.scale = self.properties.slider.value = scale
         self.properties.image.style.transform = transform.call(self)
       }
@@ -339,15 +403,25 @@ import './cropme.sass'
 
         properties.x = cx
         properties.y = cy
+
+        properties.origin_x = imageData.width / 2
+        properties.origin_y = imageData.height / 2
+
         properties.scale = scale
         properties.slider.value = scale
         properties.deg = obj.deg || 0
         properties.image.style.transform = transform.call(self)
+        properties.image.style.transformOrigin = transformOrigin.call(self, properties.origin_x, properties.origin_y)
         properties.image.style.opacity = 1
       }
     }
     rotate(deg) {
       this.properties.deg = deg
+      let origin = this.properties.image.style.transformOrigin.split('px ')
+      let ox = parseInt(origin[0])
+      let oy = parseInt(origin[1])
+      this.properties.rotate_originx = ox
+      this.properties.rotate_originy = oy
       this.properties.image.style.transform = transform.call(this)
     }
     export (options) {

@@ -15,7 +15,7 @@ var cropme = new Cropme(el, {
     }
 })
 cropme.bind({
-    url: '/images/pic.jpeg'
+    url: '/images/owndays.png'
 })
 
 var cropButton = document.getElementById('crop')
@@ -27,4 +27,9 @@ cropButton.addEventListener('click', function () {
         img.src = res
         $('#cropmeModal').modal()
     })
+})
+let rotate = document.getElementById('rotate')
+rotate.addEventListener('input',function(e){
+    cropme.rotate(e.target.value)
+    
 })
