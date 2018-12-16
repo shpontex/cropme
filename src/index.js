@@ -112,7 +112,6 @@ import './cropme.sass'
 
     let x, movex = 0,
       y, movey = 0,
-      diffx, diffy,
       self = this
 
 
@@ -187,50 +186,49 @@ import './cropme.sass'
 
 
       let angle = -parseInt(self.properties.deg) * Math.PI / 180
-      let deg = -parseInt(self.properties.deg)
+      // let deg = -parseInt(self.properties.deg)
       cx = left / scale;
       cy = top / scale;
 
 
       if (angle) {
-        let old_originx = self.properties.rotate_originx
-        let old_originy = self.properties.rotate_originy
-        let nx = 0 - old_originx
-        let ny = 0 - old_originy
+        // let old_originx = self.properties.rotate_originx
+        // let old_originy = self.properties.rotate_originy
+        // let nx = 0 - old_originx
+        // let ny = 0 - old_originy
 
+        // let x = nx * Math.cos(angle) - ny * Math.sin(angle)
+        // let y = nx * Math.sin(angle) + ny * Math.cos(angle)
+        // let diffx = nx - x
+        // let diffy = ny - y
 
+        // if (deg < 0 && deg > -90) {
+        //   cx = cx - diffx
+        //   cy = cy - diffx
+        // }
+        // if (deg < -90 && deg > -180) {
+        //   cx = cx + (200 + diffy)
+        //   cy = cy + (200 + diffy)
+        // }
+        // if (deg < 180 && deg > 90) {
+        //   cx = cx + (200 + diffx)
+        //   cy = cy + (200 + diffx)
+        // }
+        // if (deg < 90 && deg > 0) {
+        //   cx = cx - diffy
+        //   cy = cy - diffy
+        // }
 
-        let x = nx * Math.cos(angle) - ny * Math.sin(angle)
-        let y = nx * Math.sin(angle) + ny * Math.cos(angle)
-        let diffx = nx - x
-        let diffy = ny - y
-
-        if (deg < 0 && deg > -90) {
-          cx = cx - diffx
-          cy = cy - diffx
-        }
-        if (deg < -90 && deg > -180) {
-          cx = cx + (200 + diffy)
-          cy = cy + (200 + diffy)
-        }
-        if (deg < 180 && deg > 90) {
-          cx = cx + (200 + diffx)
-          cy = cy + (200 + diffx)
-        }
-        if (deg < 90 && deg > 0) {
-          cx = cx - diffy
-          cy = cy - diffy
-        }
-
-        self.properties.rotate_originx = cx
-        self.properties.rotate_originy = cy
+        // self.properties.rotate_originx = cx
+        // self.properties.rotate_originy = cy
 
       } else {
+        // Set the origin
         self.properties.x -= (cx - ox) * (1 - scale);
         self.properties.y -= (cy - oy) * (1 - scale);
+        self.properties.image.style.transformOrigin = transformOrigin.call(self, cx, cy)
+        self.properties.image.style.transform = transform.call(self)
       }
-      self.properties.image.style.transformOrigin = transformOrigin.call(self, cx, cy)
-      self.properties.image.style.transform = transform.call(self)
 
     }
     document.addEventListener('mouseup', up)
