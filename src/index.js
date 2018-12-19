@@ -48,18 +48,53 @@ import './cropme.sass'
     return x + 'px ' + y + 'px'
   }
 
-  function createSlider() {
-    const sliderContainer = document.createElement('div')
-    sliderContainer.classList.add('cropme-slider')
-    const slider = this.properties.slider = document.createElement('input')
-    slider.type = 'range'
+  function createRotationSlider(sldr) {
+    if (this.options.rotation.slider) {
+      const sliderContainer = document.createElement('div')
+      sliderContainer.classList.add('cropme-rotation-slider')
+      const slider = this.properties.rotation_slider = sldr || document.createElement('input')
+      slider.type = 'range'
+      slider.setAttribute('min', -180)
+      slider.setAttribute('max', 180)
+      slider.setAttribute('step', 1)
+      slider.value = 0
 
-    slider.setAttribute('min', this.options.zoom.min)
-    slider.setAttribute('max', this.options.zoom.max)
-    slider.setAttribute('step', 0.000001)
-    slider.style.width = this.options.container.width + 'px'
-    sliderContainer.appendChild(slider)
-    this.properties.wrapper.appendChild(sliderContainer)
+      slider.style.width = this.options.container.width + 'px'
+      sliderContainer.appendChild(slider)
+      this.properties.wrapper.appendChild(sliderContainer)
+      let self = this
+      this.properties.rotation_slider.addEventListener('input', function (e) {
+        self.rotate(e.target.value)
+      })
+    }
+  }
+
+  function createSlider(sldr) {
+    if (this.options.zoom.slider && this.options.zoom.enable) {
+      let self = this
+      const sliderContainer = document.createElement('div')
+      sliderContainer.classList.add('cropme-slider')
+      const slider = this.properties.slider = sldr || document.createElement('input')
+      slider.type = 'range'
+
+      slider.setAttribute('min', this.options.zoom.min)
+      slider.setAttribute('max', this.options.zoom.max)
+      slider.setAttribute('step', 0.000001)
+      slider.style.width = this.options.container.width + 'px'
+      sliderContainer.style.transform = 'translate(' + 42 + 'px, ' + (this.options.container.height / 2 - 12) + 'px) rotate(-90deg)'
+      sliderContainer.appendChild(slider)
+      this.properties.wrapper.insertBefore(sliderContainer,this.properties.wrapper.firstChild)
+      this.properties.slider.value = this.properties.scale
+      this.properties.slider.addEventListener('input', function (e) {
+        self.properties.scale = parseFloat(e.target.value)
+        self.properties.image.style.transform = transform.call(self)
+      })
+    } else {
+      let slider = this.properties.slider
+      if (slider) {
+        this.properties.wrapper.removeChild(slider.parentNode)
+      }
+    }
   }
 
   function createContainer() {
@@ -79,8 +114,9 @@ import './cropme.sass'
     this.properties.container.appendChild(this.properties.image)
   }
 
-  function createViewport() {
-    const viewport = this.properties.viewport = document.createElement('div')
+  function createViewport(view_port) {
+
+    const viewport = this.properties.viewport = view_port || document.createElement('div')
     const options = this.options
     options.viewport.width = options.viewport.width > options.container.width ? options.container.width : options.viewport.width
     options.viewport.height = options.viewport.height > options.container.height ? options.container.height : options.viewport.height
@@ -104,6 +140,7 @@ import './cropme.sass'
   }
 
   function createContext() {
+    createRotationSlider.call(this)
     createContainer.call(this)
     createSlider.call(this)
     createImage.call(this)
@@ -231,28 +268,22 @@ import './cropme.sass'
       }
 
     }
-    document.addEventListener('mouseup', up)
-    document.addEventListener("touchend", up);
+    self.properties.image.addEventListener('mouseup', up)
+    self.properties.image.addEventListener("touchend", up);
 
-    self.properties.slider.addEventListener('input', function (e) {
-      self.properties.scale = parseFloat(e.target.value)
-      self.properties.image.style.transform = transform.call(self)
-    })
 
     let mousewheel = function (e) {
       e.preventDefault()
       let scale = self.properties.scale + (e.wheelDelta / 1200 * self.properties.scale)
-      if (scale > self.options.zoom.min && scale < self.options.zoom.max && self.options.zoom.mouseWheel) {
-
-        self.properties.scale = self.properties.slider.value = scale
+      if (scale > self.options.zoom.min && scale < self.options.zoom.max && self.options.zoom.mouseWheel && self.options.zoom.enable) {
+        if (self.options.zoom.slider) {
+          self.properties.slider.value = scale
+        }
+        self.properties.scale = scale
         self.properties.image.style.transform = transform.call(self)
       }
     }
     self.properties.container.addEventListener('mousewheel', mousewheel)
-    if (!self.options.zoom.slider) {
-      let slider = this.properties.slider.parentNode
-      self.properties.wrapper.removeChild(slider)
-    }
   }
 
   function createCanvas(options) {
@@ -408,7 +439,9 @@ import './cropme.sass'
         properties.origin_y = imageData.height / 2
 
         properties.scale = scale
-        properties.slider.value = scale
+        if (self.options.zoom.slider) {
+          properties.slider.value = scale
+        }
         properties.deg = obj.deg || 0
         properties.image.style.transform = transform.call(self)
         properties.image.style.transformOrigin = transformOrigin.call(self, properties.origin_x, properties.origin_y)
@@ -438,6 +471,12 @@ import './cropme.sass'
         scale: this.properties.scale,
         deg: parseInt(this.properties.deg)
       }
+    }
+    reload(options) {
+      this.options = nestedObjectAssign(defaultOptions, options)
+      createViewport.call(this, this.properties.viewport)
+      createSlider.call(this, this.properties.slider)
+      createRotationSlider.call(this, this.properties.rotation_slider)
     }
     destroy() {
       this.properties.wrapper.innerHTML = ''
@@ -471,6 +510,9 @@ import './cropme.sass'
       slider: false
     },
     customClass: '',
+    rotation: {
+      slider: false
+    }
   }
 
   if (typeof module === "object" && typeof module.exports === "object") {
