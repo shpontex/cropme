@@ -1,35 +1,69 @@
-var el = document.getElementById('cropme')
-
-var cropme = new Cropme(el, {
-    container: {
-        width: 300,
-        height: 300
+new Vue({
+    el: "#app",
+    data: {
+        options: {},
+        defaultOptions: {
+            container: {
+                width: 300,
+                height: 300
+            },
+            viewport: {
+                width: 150,
+                height: 150,
+                type: 'circle',
+                border: {
+                    width: 2,
+                    enable: true,
+                    color: '#fff'
+                }
+            },
+            zoom: {
+                enable: true,
+                mouseWheel: true,
+                slider: true
+            },
+            rotation: {
+                slider: true
+            }
+        },
+        cropme: {},
+        el: {}
     },
-    viewport: {
-        width: 150,
-        height: 150,
-        type: 'circle'
+    watch: {
+        options: {
+            handler(val) {
+                this.cropme.reload(val)
+            },
+            deep: true
+        }
     },
-    zoom:{
-        slider: true
+    created() {
+        this.options = JSON.parse(JSON.stringify(this.defaultOptions))
+    },
+    mounted() {
+        this.init()
+    },
+    methods: {
+        init() {
+            this.el = document.getElementById('cropme')
+            this.cropme = new Cropme(this.el, this.options)
+            this.cropme.bind({
+                url: '/images/owndays.png'
+            })
+        },
+        crop() {
+            let img = document.getElementById('cropme-result')
+            this.cropme.export({
+                width: 600
+            }).then(res => {
+                img.src = res
+                $('#cropmeModal').modal()
+            })
+        },
+        reset() {
+            this.options = JSON.parse(JSON.stringify(this.defaultOptions))
+            this.cropme.destroy()
+            this.init()
+        }
     }
-})
-cropme.bind({
-    url: '/images/owndays.png'
-})
-
-var cropButton = document.getElementById('crop')
-cropButton.addEventListener('click', function () {
-    let img = document.getElementById('cropme-result')
-    cropme.export({
-        width: 600
-    }).then(res => {
-        img.src = res
-        $('#cropmeModal').modal()
-    })
-})
-let rotate = document.getElementById('rotate')
-rotate.addEventListener('input',function(e){
-    cropme.rotate(e.target.value)
-    
 })

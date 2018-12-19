@@ -8,6 +8,12 @@
 h2.display-4 {
     font-size: 25px;
 }
-.installation p {
-    border-left: 2px solid #5bc0de
+.title {
+
+}
+.options {
+    margin-bottom: 10px;
+}
+.output {
+    background-color: #eee;
 }
