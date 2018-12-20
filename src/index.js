@@ -48,51 +48,63 @@ import './cropme.sass'
     return x + 'px ' + y + 'px'
   }
 
-  function createRotationSlider(sldr) {
-    if (this.options.rotation.slider) {
-      const sliderContainer = document.createElement('div')
-      sliderContainer.classList.add('cropme-rotation-slider')
-      const slider = this.properties.rotation_slider = sldr || document.createElement('input')
-      slider.type = 'range'
-      slider.setAttribute('min', -180)
-      slider.setAttribute('max', 180)
-      slider.setAttribute('step', 1)
-      slider.value = 0
+  function createRotationSlider() {
+    if (this.properties.rotation_slider) {
+      if (!this.options.rotation.slider ) {
+        this.properties.wrapper.removeChild(this.properties.rotation_slider.parentNode)
+        delete this.properties.rotation_slider
+      }
+    } else {
+      if (this.options.rotation.slider) {
+        const sliderContainer = document.createElement('div')
+        sliderContainer.classList.add('cropme-rotation-slider')
+        const slider = this.properties.rotation_slider =  document.createElement('input')
+        slider.type = 'range'
+        slider.setAttribute('min', -180)
+        slider.setAttribute('max', 180)
+        slider.setAttribute('step', 1)
+        slider.value = 0
 
-      slider.style.width = this.options.container.width + 'px'
-      sliderContainer.appendChild(slider)
-      this.properties.wrapper.appendChild(sliderContainer)
-      let self = this
-      this.properties.rotation_slider.addEventListener('input', function (e) {
-        self.rotate(e.target.value)
-      })
+        slider.style.width = this.options.container.width + 'px'
+        sliderContainer.appendChild(slider)
+        this.properties.wrapper.appendChild(sliderContainer)
+        let self = this
+        this.properties.rotation_slider.addEventListener('input', function (e) {
+          self.rotate(e.target.value)
+        })
+      }
     }
   }
 
-  function createSlider(sldr) {
-    if (this.options.zoom.slider && this.options.zoom.enable) {
-      let self = this
-      const sliderContainer = document.createElement('div')
-      sliderContainer.classList.add('cropme-slider')
-      const slider = this.properties.slider = sldr || document.createElement('input')
-      slider.type = 'range'
-
-      slider.setAttribute('min', this.options.zoom.min)
-      slider.setAttribute('max', this.options.zoom.max)
-      slider.setAttribute('step', 0.000001)
-      slider.style.width = this.options.container.width + 'px'
-      sliderContainer.style.transform = 'translate(' + 42 + 'px, ' + (this.options.container.height / 2 - 12) + 'px) rotate(-90deg)'
-      sliderContainer.appendChild(slider)
-      this.properties.wrapper.insertBefore(sliderContainer,this.properties.wrapper.firstChild)
-      this.properties.slider.value = this.properties.scale
-      this.properties.slider.addEventListener('input', function (e) {
-        self.properties.scale = parseFloat(e.target.value)
-        self.properties.image.style.transform = transform.call(self)
-      })
+  function createSlider() {
+    if (this.properties.slider) {
+      if (!this.options.zoom.slider || !this.options.zoom.enable) {
+        this.properties.wrapper.removeChild(this.properties.slider.parentNode)
+        delete this.properties.slider
+      }
     } else {
-      let slider = this.properties.slider
-      if (slider) {
-        this.properties.wrapper.removeChild(slider.parentNode)
+      if (this.options.zoom.slider && this.options.zoom.enable) {
+        let self = this
+        const sliderContainer = document.createElement('div')
+        sliderContainer.classList.add('cropme-slider')
+        const slider = this.properties.slider = document.createElement('input')
+        slider.type = 'range'
+
+        slider.setAttribute('min', this.options.zoom.min)
+        slider.setAttribute('max', this.options.zoom.max)
+        slider.setAttribute('step', 0.000001)
+        slider.style.width = this.options.container.width + 'px'
+        sliderContainer.style.transform = 'translate(' + (this.options.container.width / 2 + 12) + 'px, ' + (this.options.container.height / 2 + 12) + 'px) rotate(-90deg)'
+        sliderContainer.style.marginTop = '-24px'
+        
+        
+        sliderContainer.appendChild(slider)
+        this.properties.wrapper.insertBefore(sliderContainer, this.properties.wrapper.firstChild)
+        this.properties.slider.value = this.properties.scale
+        this.properties.slider.addEventListener('input', function (e) {
+          self.properties.scale = parseFloat(e.target.value)
+          self.properties.image.style.transform = transform.call(self)
+        })
       }
     }
   }
@@ -140,8 +152,8 @@ import './cropme.sass'
   }
 
   function createContext() {
-    createRotationSlider.call(this)
     createContainer.call(this)
+    createRotationSlider.call(this)
     createSlider.call(this)
     createImage.call(this)
     createViewport.call(this)
@@ -475,8 +487,8 @@ import './cropme.sass'
     reload(options) {
       this.options = nestedObjectAssign(defaultOptions, options)
       createViewport.call(this, this.properties.viewport)
-      createSlider.call(this, this.properties.slider)
-      createRotationSlider.call(this, this.properties.rotation_slider)
+      createSlider.call(this)
+      createRotationSlider.call(this)
     }
     destroy() {
       this.properties.wrapper.innerHTML = ''

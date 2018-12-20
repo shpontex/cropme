@@ -4,12 +4,12 @@ new Vue({
         options: {},
         defaultOptions: {
             container: {
-                width: 300,
-                height: 300
+                width: 400,
+                height: 400
             },
             viewport: {
-                width: 150,
-                height: 150,
+                width: 200,
+                height: 200,
                 type: 'circle',
                 border: {
                     width: 2,
