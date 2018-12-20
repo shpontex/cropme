@@ -59,10 +59,10 @@
                 <div class="col-md-6">
                     <div class="options">
                         <div class="title">Viewport Type</div>
-                                 <select class="form-control" v-model="options.viewport.type">
-                                    <option value="square">square</option>
-                                    <option value="circle">circle</option>
-                                </select>
+                        <select class="form-control" v-model="options.viewport.type">
+                            <option value="square">square</option>
+                            <option value="circle">circle</option>
+                        </select>
                     </div>
                     <div class="options">
                         <div class="title">Border</div>
@@ -123,8 +123,10 @@
                             </div>
                         </div>
                     </div>
-                    <button class="btn btn-outline-danger" @click="reset">Reset </button>
-                    <button class="btn btn-outline-success float-right" @click="crop">Crop me</button>
+                    <div class="mt-4">
+                        <button class="btn btn-outline-danger" @click="reset">Reset </button>
+                        <button class="btn btn-outline-success float-right" @click="crop">Crop me</button>
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <div id="cropme"></div>
