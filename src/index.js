@@ -50,7 +50,7 @@ import './cropme.sass'
 
   function createRotationSlider() {
     if (this.properties.rotation_slider) {
-      if (!this.options.rotation.slider ) {
+      if (!this.options.rotation.slider) {
         this.properties.wrapper.removeChild(this.properties.rotation_slider.parentNode)
         delete this.properties.rotation_slider
       }
@@ -58,7 +58,7 @@ import './cropme.sass'
       if (this.options.rotation.slider) {
         const sliderContainer = document.createElement('div')
         sliderContainer.classList.add('cropme-rotation-slider')
-        const slider = this.properties.rotation_slider =  document.createElement('input')
+        const slider = this.properties.rotation_slider = document.createElement('input')
         slider.type = 'range'
         slider.setAttribute('min', -180)
         slider.setAttribute('max', 180)
@@ -96,8 +96,8 @@ import './cropme.sass'
         slider.style.width = this.options.container.width + 'px'
         sliderContainer.style.transform = 'translate(' + (this.options.container.width / 2 + 12) + 'px, ' + (this.options.container.height / 2 + 12) + 'px) rotate(-90deg)'
         sliderContainer.style.marginTop = '-24px'
-        
-        
+
+
         sliderContainer.appendChild(slider)
         this.properties.wrapper.insertBefore(sliderContainer, this.properties.wrapper.firstChild)
         this.properties.slider.value = this.properties.scale
@@ -180,6 +180,8 @@ import './cropme.sass'
 
       document.addEventListener('mousemove', move)
       document.addEventListener("touchmove", move);
+      document.addEventListener('mouseup', up)
+      document.addEventListener("touchend", up);
     }
     self.properties.image.addEventListener('mousedown', down)
     self.properties.image.addEventListener("touchstart", down);
@@ -219,6 +221,8 @@ import './cropme.sass'
     let up = function () {
       document.removeEventListener('touchmove', move);
       document.removeEventListener('mousemove', move);
+      document.removeEventListener('mouseup', up)
+      document.removeEventListener("touchend", up);
       self.properties.od = 0;
       self.properties.odeg = 0;
 
@@ -227,6 +231,7 @@ import './cropme.sass'
         viewportData = self.properties.viewport.getBoundingClientRect(),
         top = (viewportData.top - imageData.top) + (viewportData.height / 2),
         left = (viewportData.left - imageData.left) + (viewportData.width / 2),
+
         origin = self.properties.image.style.transformOrigin.split('px '),
         cx,
         cy
@@ -241,47 +246,16 @@ import './cropme.sass'
 
 
       if (angle) {
-        // let old_originx = self.properties.rotate_originx
-        // let old_originy = self.properties.rotate_originy
-        // let nx = 0 - old_originx
-        // let ny = 0 - old_originy
-
-        // let x = nx * Math.cos(angle) - ny * Math.sin(angle)
-        // let y = nx * Math.sin(angle) + ny * Math.cos(angle)
-        // let diffx = nx - x
-        // let diffy = ny - y
-
-        // if (deg < 0 && deg > -90) {
-        //   cx = cx - diffx
-        //   cy = cy - diffx
-        // }
-        // if (deg < -90 && deg > -180) {
-        //   cx = cx + (200 + diffy)
-        //   cy = cy + (200 + diffy)
-        // }
-        // if (deg < 180 && deg > 90) {
-        //   cx = cx + (200 + diffx)
-        //   cy = cy + (200 + diffx)
-        // }
-        // if (deg < 90 && deg > 0) {
-        //   cx = cx - diffy
-        //   cy = cy - diffy
-        // }
-
-        // self.properties.rotate_originx = cx
-        // self.properties.rotate_originy = cy
 
       } else {
         // Set the origin
-        self.properties.x -= (cx - ox) * (1 - scale);
-        self.properties.y -= (cy - oy) * (1 - scale);
-        self.properties.image.style.transformOrigin = transformOrigin.call(self, cx, cy)
-        self.properties.image.style.transform = transform.call(self)
+        // self.properties.x -= (cx - ox) * (1 - scale);
+        // self.properties.y -= (cy - oy) * (1 - scale);
+        // self.properties.image.style.transformOrigin = transformOrigin.call(self, cx, cy)
+        // self.properties.image.style.transform = transform.call(self)
       }
 
     }
-    self.properties.image.addEventListener('mouseup', up)
-    self.properties.image.addEventListener("touchend", up);
 
 
     let mousewheel = function (e) {
