@@ -60,7 +60,7 @@
                     <div class="options">
                         <div class="title">Viewport Type</div>
                         <select class="form-control" v-model="options.viewport.type">
-                            <option value="square">square</option>
+                            <option value="square">square (default)</option>
                             <option value="circle">circle</option>
                         </select>
                     </div>
@@ -69,20 +69,20 @@
                         <div class="row">
                             <div class="col-md-4">
                                 enable: <select class="form-control" v-model="options.viewport.border.enable">
-                                    <option :value="true">true</option>
+                                    <option :value="true">true (default)</option>
                                     <option :value="false">false</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 width: <select class="form-control" v-model="options.viewport.border.width">
-                                    <option value="2">2</option>
+                                    <option value="2">2 (default)</option>
                                     <option value="5">5</option>
                                     <option value="10">10</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 color: <select class="form-control" v-model="options.viewport.border.color">
-                                    <option value="#fff">white</option>
+                                    <option value="#fff">white (default)</option>
                                     <option value="#f00">red</option>
                                     <option value="#00f">bleu</option>
                                 </select>
@@ -94,20 +94,20 @@
                         <div class="row">
                             <div class="col-md-4">
                                 enable: <select class="form-control" v-model="options.zoom.enable">
-                                    <option :value="true">true</option>
+                                    <option :value="true">true (default)</option>
                                     <option :value="false">false</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 mouseWheel: <select class="form-control" v-model="options.zoom.mouseWheel">
-                                    <option :value="true">true</option>
+                                    <option :value="true">true (default)</option>
                                     <option :value="false">false</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 slider: <select class="form-control" v-model="options.zoom.slider">
                                     <option :value="true">true</option>
-                                    <option :value="false">false</option>
+                                    <option :value="false">false (default)</option>
                                 </select>
                             </div>
                         </div>
@@ -118,7 +118,7 @@
                             <div class="col-md-12">
                                 slider: <select class="form-control" v-model="options.rotation.slider">
                                     <option :value="true">true</option>
-                                    <option :value="false">false</option>
+                                    <option :value="false">false (default)</option>
                                 </select>
                             </div>
                         </div>
