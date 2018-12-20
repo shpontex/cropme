@@ -48,7 +48,7 @@ new Vue({
             this.el = document.getElementById('cropme')
             this.cropme = new Cropme(this.el, this.options)
             this.cropme.bind({
-                url: '/images/owndays.png'
+                url: '/images/pic.jpeg'
             })
         },
         crop() {
