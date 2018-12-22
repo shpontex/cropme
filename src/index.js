@@ -4,38 +4,29 @@ import './cropme.sass'
   const nestedObjectAssign = require('./polyfills')
   if (window.jQuery) {
     jQuery.fn.cropme = function (options, obj) {
-
       if (typeof options === 'object') {
-
         return this.each(function () {
           var cropme = new Cropme(this, options)
           $(this).data('cropme', cropme)
-        });
-
+        })
       } else if (typeof options === 'string') {
-
         let cropme = this.data('cropme')
-
-        if (options === 'position') {
-          return cropme.position()
+        switch (options) {
+          case 'position':
+            return cropme.position()
+          case 'bind':
+            return cropme.bind(obj)
+          case 'export':
+            return cropme.export(obj)
+          case 'rotate':
+            return cropme.rotate(obj)
+          case 'destroy':
+            return cropme.destroy()
+          default:
+            throw 'Error: ' + options + ' method not found'
         }
-        if (options === 'bind') {
-          return cropme.bind(obj)
-        }
-        if (options === 'export') {
-          return cropme.export(obj)
-        }
-        if (options === 'rotate') {
-          return cropme.rotate(obj)
-        }
-        if (options === 'destroy') {
-          return cropme.destroy()
-        }
-        throw 'Error: ' + options + ' method not found';
-
       } else {
         throw 'Error: the argument must be an object or a string'
-
       }
     }
   }
@@ -158,59 +149,53 @@ import './cropme.sass'
     createImage.call(this)
     createViewport.call(this)
 
-
-    let x, movex = 0,
-      y, movey = 0,
-      self = this
-
+    let x, y, moveX = 0, moveY = 0, self = this
 
     let down = function (e) {
-      e.preventDefault();
+      e.preventDefault()
       let pageX = e.pageX
       let pageY = e.pageY
       if (e.touches) {
-        let touches = e.touches[0]
-        pageX = touches.pageX
-        pageY = touches.pageY
+        pageX = e.touches[0].pageX
+        pageY = e.touches[0].pageY
       }
-      movex = self.properties.x || movex
-      movey = self.properties.y || movey
-      x = pageX - movex
-      y = pageY - movey
+      moveX = self.properties.x || moveX
+      moveY = self.properties.y || moveY
+      x = pageX - moveX
+      y = pageY - moveY
 
       document.addEventListener('mousemove', move)
-      document.addEventListener("touchmove", move);
+      document.addEventListener('touchmove', move)
       document.addEventListener('mouseup', up)
-      document.addEventListener("touchend", up);
+      document.addEventListener('touchend', up)
     }
     self.properties.image.addEventListener('mousedown', down)
-    self.properties.image.addEventListener("touchstart", down);
+    self.properties.image.addEventListener('touchstart', down)
 
     let move = function (e) {
-      e.preventDefault();
+      e.preventDefault()
       let pageX = e.pageX
       let pageY = e.pageY
       if (e.touches) {
-        let touches = e.touches[0]
-        pageX = touches.pageX
-        pageY = touches.pageY
+        pageX = e.touches[0].pageX
+        pageY = e.touches[0].pageY
       }
       if (e.touches && e.touches.length > 1) {
         let second_touches = e.touches[1]
         let x = pageX - second_touches.pageX
         let y = pageY - second_touches.pageY
-        let deg = 90 - Math.atan2(x, y) * 180 / Math.PI;
+        let deg = 90 - Math.atan2(x, y) * 180 / Math.PI
 
         if (!self.properties.odeg) {
           self.properties.odeg = deg - self.properties.deg
         }
         self.properties.deg = deg - self.properties.odeg
 
-        let touches_dist = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+        let touches_dist = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))
         if (!self.properties.od) {
-          self.properties.od = touches_dist / self.properties.scale;
+          self.properties.od = touches_dist / self.properties.scale
         }
-        self.properties.scale = self.properties.slider.value = touches_dist / self.properties.od;
+        self.properties.scale = self.properties.slider.value = touches_dist / self.properties.od
       } else {
         self.properties.x = pageX - x
         self.properties.y = pageY - y
@@ -219,12 +204,12 @@ import './cropme.sass'
     }
 
     let up = function () {
-      document.removeEventListener('touchmove', move);
-      document.removeEventListener('mousemove', move);
+      document.removeEventListener('touchmove', move)
+      document.removeEventListener('mousemove', move)
       document.removeEventListener('mouseup', up)
-      document.removeEventListener("touchend", up);
-      self.properties.od = 0;
-      self.properties.odeg = 0;
+      document.removeEventListener('touchend', up)
+      self.properties.od = 0
+      self.properties.odeg = 0
 
       let scale = self.properties.scale,
         imageData = self.properties.image.getBoundingClientRect(),
@@ -241,22 +226,20 @@ import './cropme.sass'
 
       let angle = -parseInt(self.properties.deg) * Math.PI / 180
       // let deg = -parseInt(self.properties.deg)
-      cx = left / scale;
-      cy = top / scale;
+      cx = left / scale
+      cy = top / scale
 
 
       if (angle) {
 
       } else {
         // Set the origin
-        // self.properties.x -= (cx - ox) * (1 - scale);
-        // self.properties.y -= (cy - oy) * (1 - scale);
+        // self.properties.x -= (cx - ox) * (1 - scale)
+        // self.properties.y -= (cy - oy) * (1 - scale)
         // self.properties.image.style.transformOrigin = transformOrigin.call(self, cx, cy)
         // self.properties.image.style.transform = transform.call(self)
       }
-
     }
-
 
     let mousewheel = function (e) {
       e.preventDefault()
@@ -274,7 +257,7 @@ import './cropme.sass'
 
   function createCanvas(options) {
     let canvas = document.createElement('canvas'),
-      ctx = canvas.getContext('2d');
+      ctx = canvas.getContext('2d')
 
     let width = this.options.viewport.width
     let height = this.options.viewport.height
@@ -311,23 +294,23 @@ import './cropme.sass'
 
     const imageData = this.properties.image.getBoundingClientRect()
     const viewportData = this.properties.viewport.getBoundingClientRect()
-
     const x = xs * (imageData.x - viewportData.x - this.options.viewport.border.width)
     const y = ys * (imageData.y - viewportData.y - this.options.viewport.border.width)
+
     if (deg !== 0) {
       ctx.translate((nx - this.properties.x) * xs, (ny - this.properties.y) * ys)
-      ctx.translate(width / 2, height / 2);
-      ctx.rotate(deg * Math.PI / 180);
-      ctx.translate(-width / 2, -height / 2);
+      ctx.translate(width / 2, height / 2)
+      ctx.rotate(deg * Math.PI / 180)
+      ctx.translate(-width / 2, -height / 2)
     }
 
     ctx.drawImage(this.properties.image, x, y, imageData.width * xs, imageData.height * ys)
 
     if (this.options.viewport.type === 'circle') {
-      ctx.translate(width / 2, height / 2);
-      ctx.rotate(-deg * Math.PI / 180);
-      ctx.translate(-width / 2, -height / 2);
-      ctx.scale(1, this.options.viewport.height / this.options.viewport.width);
+      ctx.translate(width / 2, height / 2)
+      ctx.rotate(-deg * Math.PI / 180)
+      ctx.translate(-width / 2, -height / 2)
+      ctx.scale(1, this.options.viewport.height / this.options.viewport.width)
       let diff = (this.options.viewport.width - this.options.viewport.height) / 2 * xs
       let x_coordinate = (this.properties.x - nx) * xs
       let y_coordinate = (this.properties.y - ny) * ys
@@ -340,24 +323,23 @@ import './cropme.sass'
 
       ctx.globalCompositeOperation = 'destination-in'
       ctx.arc(width / 2, height / 2, width / 2, 0, 2 * Math.PI)
-      ctx.fill();
+      ctx.fill()
     }
     if (this.options.viewport.type === 'triangle') {
-      ctx.translate(width / 2, height / 2);
-      ctx.rotate(-deg * Math.PI / 180);
-      ctx.translate(-width / 2, -height / 2);
+      ctx.translate(width / 2, height / 2)
+      ctx.rotate(-deg * Math.PI / 180)
+      ctx.translate(-width / 2, -height / 2)
       ctx.translate((this.properties.x - nx) * xs, (this.properties.y - ny) * ys)
-      ctx.beginPath();
+      ctx.beginPath()
       ctx.globalCompositeOperation = 'destination-in'
-      ctx.moveTo(width / 2, 0);
-      ctx.lineTo(width, height);
-      ctx.lineTo(0, height);
-      ctx.closePath();
-      ctx.fill();
+      ctx.moveTo(width / 2, 0)
+      ctx.lineTo(width, height)
+      ctx.lineTo(0, height)
+      ctx.closePath()
+      ctx.fill()
     }
 
     transformImage.call(this, deg, nx, ny)
-
     return canvas
   }
 
@@ -374,7 +356,7 @@ import './cropme.sass'
         this.properties.image = new Image()
         this.properties.image.src = el.src
         this.properties.wrapper = document.createElement('div')
-        el.parentNode.insertBefore(this.properties.wrapper, el.previousSibling);
+        el.parentNode.insertBefore(this.properties.wrapper, el.previousSibling)
         el.parentNode.removeChild(el)
       }
       this.properties.wrapper.className += 'cropme-wrapper ' + this.options.customClass
@@ -392,7 +374,6 @@ import './cropme.sass'
       let options = this.options
       let self = this
       this.properties.image.onload = function () {
-
         let imageData = properties.image.getBoundingClientRect()
         let containerData = properties.container.getBoundingClientRect()
         let cx = (containerData.width - imageData.width) / 2
@@ -400,7 +381,7 @@ import './cropme.sass'
         properties.ox = cx
         properties.oy = cy
 
-        if (typeof obj.position == 'object') {
+        if (typeof obj.position === 'object') {
           cx = obj.position.x || cx
           cy = obj.position.y || cy
         }
@@ -416,7 +397,6 @@ import './cropme.sass'
         if (scale > options.zoom.max) {
           scale = options.zoom.max
         }
-
 
         properties.x = cx
         properties.y = cy
@@ -466,10 +446,9 @@ import './cropme.sass'
     }
     destroy() {
       this.properties.wrapper.innerHTML = ''
-      this.properties.wrapper.className = this.properties.wrapper.className.replace('cropme-wrapper', '');
+      this.properties.wrapper.className = this.properties.wrapper.className.replace('cropme-wrapper', '')
       delete this.options
       delete this.properties
-
     }
   }
 
@@ -477,7 +456,6 @@ import './cropme.sass'
     container: {
       width: 300,
       height: 300,
-
     },
     viewport: {
       width: 100,
@@ -501,12 +479,12 @@ import './cropme.sass'
     }
   }
 
-  if (typeof module === "object" && typeof module.exports === "object") {
+  if (typeof module === 'object' && typeof module.exports === 'object') {
     module.exports = Cropme
   } else if (typeof define === 'function' && define.amd) {
     define([], function () {
       return Cropme
-    });
+    })
   } else {
     global.Cropme = Cropme
   }
