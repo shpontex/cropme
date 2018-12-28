@@ -33,6 +33,8 @@
   text-align: center; }
   .cropme-slider input, .cropme-rotation-slider input {
     -webkit-appearance: none; }
+    .cropme-slider input:disabled, .cropme-rotation-slider input:disabled {
+      opacity: 0.5; }
     .cropme-slider input::-webkit-slider-runnable-track, .cropme-rotation-slider input::-webkit-slider-runnable-track {
       height: 3px;
       background: rgba(0, 0, 0, 0.5);
