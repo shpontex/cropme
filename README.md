@@ -28,7 +28,6 @@ cropme.bind({
 var el = document.getElementById('myImage')
 new Cropme(el,options)
 </script>
-
 ```
 
 ### Jquery
@@ -84,7 +83,7 @@ zoom: {
 }
 ```
 ### Rotation
-the rotation oprions
+the rotation options
 ```js
 rotation: {
   slider: false, // show or hide the slider, Bool
@@ -98,3 +97,39 @@ this class will be added to the cropme container to add custom css
 {
     customClass: 'my-custom-class', // String
 }
+```
+
+## Methods
+
+### bind(options)
+```js
+{
+    url:
+}
+```
+### export({type,width,scale})
+return the cropped image result
+#### parameters
+* type: the canvas export type , default is `base64`
+* width: // the with of the output images, the height will be proportional
+* scale: 2 // scale 1 is the original image size, this will override the width params  
+> export() without options return 'base64' image and original viewport size
+```js
+$('#myImage').cropme('export','blob')
+
+$('#myImage').cropme('export',{
+    type: 'base64',
+    width: 800
+})
+```
+
+### position() Object
+return an object of the image position
+```js
+{
+    x: 20, // the image x translate position
+    y: 40, // the image y translate position
+    scale: 1.4, // the image scale, 1 is the image default size
+    deg: 45 // the image rotation in degree
+}
+```
