@@ -20,6 +20,8 @@ import './cropme.sass'
             return cropme.export(obj)
           case 'rotate':
             return cropme.rotate(obj)
+          case 'reload':
+            return cropme.reload(obj)
           case 'destroy':
             return cropme.destroy()
           default:
@@ -44,7 +46,7 @@ import './cropme.sass'
       if (!this.options.rotation.slider) {
         this.properties.wrapper.removeChild(this.properties.rotation_slider.parentNode)
         delete this.properties.rotation_slider
-      }else{
+      } else {
         this.properties.rotation_slider.disabled = !this.options.rotation.enable
       }
     } else {
@@ -71,15 +73,15 @@ import './cropme.sass'
   }
 
   function createSlider() {
-    function changeSliderParameter(){
-        let positionX = this.options.container.width / 2 + 12
-        if(this.options.rotation.position === 'left') {
-          positionX = - this.options.container.width / 2 - 20
-        }
-        const positionY = this.options.container.height / 2 + 12
-        this.properties.sliderContainer.style.transform = 'translate(' + positionX + 'px, ' + positionY + 'px) rotate(-90deg)'
-        this.properties.sliderContainer.style.marginTop = '-24px'
-        this.properties.slider.disabled = !this.options.zoom.enable
+    function changeSliderParameter() {
+      let positionX = this.options.container.width / 2 + 12
+      if (this.options.rotation.position === 'left') {
+        positionX = -this.options.container.width / 2 - 20
+      }
+      const positionY = this.options.container.height / 2 + 12
+      this.properties.sliderContainer.style.transform = 'translate(' + positionX + 'px, ' + positionY + 'px) rotate(-90deg)'
+      this.properties.sliderContainer.style.marginTop = '-24px'
+      this.properties.slider.disabled = !this.options.zoom.enable
     }
     if (this.properties.slider) {
       if (!this.options.zoom.slider) {
@@ -392,46 +394,49 @@ import './cropme.sass'
       let properties = this.properties
       let options = this.options
       let self = this
-      this.properties.image.onload = function () {
-        let imageData = properties.image.getBoundingClientRect()
-        let containerData = properties.container.getBoundingClientRect()
-        let cx = (containerData.width - imageData.width) / 2
-        let cy = (containerData.height - imageData.height) / 2
-        properties.ox = cx
-        properties.oy = cy
+      return new Promise((resolve, reject) => {
+        this.properties.image.onload = function () {
+          let imageData = properties.image.getBoundingClientRect()
+          let containerData = properties.container.getBoundingClientRect()
+          let cx = (containerData.width - imageData.width) / 2
+          let cy = (containerData.height - imageData.height) / 2
+          properties.ox = cx
+          properties.oy = cy
 
-        if (typeof obj.position === 'object') {
-          cx = obj.position.x || cx
-          cy = obj.position.y || cy
+          if (typeof obj.position === 'object') {
+            cx = obj.position.x || cx
+            cy = obj.position.y || cy
+          }
+
+          let scale = obj.scale ? obj.scale : containerData.height / imageData.height
+          if (options.zoom.max <= options.zoom.min) {
+            throw 'Error: max zoom cannot be less or equal to min zoom'
+          }
+
+          if (scale < options.zoom.min) {
+            scale = options.zoom.min
+          }
+          if (scale > options.zoom.max) {
+            scale = options.zoom.max
+          }
+
+          properties.x = cx
+          properties.y = cy
+
+          properties.origin_x = imageData.width / 2
+          properties.origin_y = imageData.height / 2
+
+          properties.scale = scale
+          if (self.options.zoom.slider) {
+            properties.slider.value = scale
+          }
+          properties.deg = obj.angle || 0
+          properties.image.style.transform = transform.call(self)
+          properties.image.style.transformOrigin = transformOrigin.call(self, properties.origin_x, properties.origin_y)
+          properties.image.style.opacity = 1
+          resolve(self.properties.image)
         }
-
-        let scale = obj.scale ? obj.scale : containerData.height / imageData.height
-        if (options.zoom.max <= options.zoom.min) {
-          throw 'Error: max zoom cannot be less or equal to min zoom'
-        }
-
-        if (scale < options.zoom.min) {
-          scale = options.zoom.min
-        }
-        if (scale > options.zoom.max) {
-          scale = options.zoom.max
-        }
-
-        properties.x = cx
-        properties.y = cy
-
-        properties.origin_x = imageData.width / 2
-        properties.origin_y = imageData.height / 2
-
-        properties.scale = scale
-        if (self.options.zoom.slider) {
-          properties.slider.value = scale
-        }
-        properties.deg = obj.angle || 0
-        properties.image.style.transform = transform.call(self)
-        properties.image.style.transformOrigin = transformOrigin.call(self, properties.origin_x, properties.origin_y)
-        properties.image.style.opacity = 1
-      }
+      })
     }
     rotate(deg) {
       this.properties.deg = deg
