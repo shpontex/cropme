@@ -394,7 +394,7 @@ import './cropme.sass'
       let properties = this.properties
       let options = this.options
       let self = this
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve => {
         this.properties.image.onload = function () {
           let imageData = properties.image.getBoundingClientRect()
           let containerData = properties.container.getBoundingClientRect()
@@ -450,7 +450,7 @@ import './cropme.sass'
     export (options) {
       let canvas = createCanvas.call(this, options)
       options = typeof options === 'object' ? options.type : options
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         options === 'blob' ? canvas.toBlob(blob => resolve(URL.createObjectURL(blob))) : resolve(canvas.toDataURL())
       })
     }

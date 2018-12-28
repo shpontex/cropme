@@ -1,7 +1,7 @@
-# CropME
+# Cropme
 Cropme is a customizable and easy to use javascript image cropping plugin
 ## Example
-www.shpontex.github.io/cropme
+https://shpontex.github.io/cropme
 ## Installation
 NPM: `npm install cropme`
 
@@ -35,8 +35,8 @@ new Cropme(el,options)
 <div id="container"></div>
 
 <script>
-$('#container').cropme(method,options)
-$('#container').cropme('bind',{
+var example = $('#container').cropme(method,options)
+example.cropme('bind',{
     url: 'images/naruto.jpg'
 })
 </script>
