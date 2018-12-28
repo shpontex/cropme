@@ -44,6 +44,8 @@ import './cropme.sass'
       if (!this.options.rotation.slider) {
         this.properties.wrapper.removeChild(this.properties.rotation_slider.parentNode)
         delete this.properties.rotation_slider
+      }else{
+        this.properties.rotation_slider.disabled = !this.options.rotation.enable
       }
     } else {
       if (this.options.rotation.slider) {
@@ -63,20 +65,33 @@ import './cropme.sass'
         this.properties.rotation_slider.addEventListener('input', function (e) {
           self.rotate(e.target.value)
         })
+        this.properties.rotation_slider.disabled = !this.options.rotation.enable
       }
     }
   }
 
   function createSlider() {
+    function changeSliderParameter(){
+        let positionX = this.options.container.width / 2 + 12
+        if(this.options.rotation.position === 'left') {
+          positionX = - this.options.container.width / 2 - 20
+        }
+        const positionY = this.options.container.height / 2 + 12
+        this.properties.sliderContainer.style.transform = 'translate(' + positionX + 'px, ' + positionY + 'px) rotate(-90deg)'
+        this.properties.sliderContainer.style.marginTop = '-24px'
+        this.properties.slider.disabled = !this.options.zoom.enable
+    }
     if (this.properties.slider) {
-      if (!this.options.zoom.slider || !this.options.zoom.enable) {
+      if (!this.options.zoom.slider) {
         this.properties.wrapper.removeChild(this.properties.slider.parentNode)
         delete this.properties.slider
+      } else {
+        changeSliderParameter.call(this)
       }
     } else {
-      if (this.options.zoom.slider && this.options.zoom.enable) {
+      if (this.options.zoom.slider) {
         let self = this
-        const sliderContainer = document.createElement('div')
+        const sliderContainer = this.properties.sliderContainer = document.createElement('div')
         sliderContainer.classList.add('cropme-slider')
         const slider = this.properties.slider = document.createElement('input')
         slider.type = 'range'
@@ -85,9 +100,6 @@ import './cropme.sass'
         slider.setAttribute('max', this.options.zoom.max)
         slider.setAttribute('step', 0.000001)
         slider.style.width = this.options.container.width + 'px'
-        sliderContainer.style.transform = 'translate(' + (this.options.container.width / 2 + 12) + 'px, ' + (this.options.container.height / 2 + 12) + 'px) rotate(-90deg)'
-        sliderContainer.style.marginTop = '-24px'
-
 
         sliderContainer.appendChild(slider)
         this.properties.wrapper.insertBefore(sliderContainer, this.properties.wrapper.firstChild)
@@ -96,6 +108,7 @@ import './cropme.sass'
           self.properties.scale = parseFloat(e.target.value)
           self.properties.image.style.transform = transform.call(self)
         })
+        changeSliderParameter.call(this)
       }
     }
   }
@@ -149,7 +162,9 @@ import './cropme.sass'
     createImage.call(this)
     createViewport.call(this)
 
-    let x, y, moveX = 0, moveY = 0, self = this
+    let x, y, moveX = 0,
+      moveY = 0,
+      self = this
 
     let down = function (e) {
       e.preventDefault()
@@ -184,18 +199,22 @@ import './cropme.sass'
         let second_touches = e.touches[1]
         let x = pageX - second_touches.pageX
         let y = pageY - second_touches.pageY
-        let deg = 90 - Math.atan2(x, y) * 180 / Math.PI
 
-        if (!self.properties.odeg) {
-          self.properties.odeg = deg - self.properties.deg
+        if (self.options.rotation.enable) {
+          let deg = 90 - Math.atan2(x, y) * 180 / Math.PI
+          if (!self.properties.odeg) {
+            self.properties.odeg = deg - self.properties.deg
+          }
+          self.properties.deg = deg - self.properties.odeg
         }
-        self.properties.deg = deg - self.properties.odeg
 
-        let touches_dist = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))
-        if (!self.properties.od) {
-          self.properties.od = touches_dist / self.properties.scale
+        if (self.options.zoom.enable) {
+          let touches_dist = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))
+          if (!self.properties.od) {
+            self.properties.od = touches_dist / self.properties.scale
+          }
+          self.properties.scale = self.properties.slider.value = touches_dist / self.properties.od
         }
-        self.properties.scale = self.properties.slider.value = touches_dist / self.properties.od
       } else {
         self.properties.x = pageX - x
         self.properties.y = pageY - y
@@ -475,7 +494,9 @@ import './cropme.sass'
     },
     customClass: '',
     rotation: {
-      slider: false
+      slider: false,
+      enable: true,
+      position: 'right'
     }
   }
 

@@ -23,7 +23,9 @@ new Vue({
                 slider: true
             },
             rotation: {
-                slider: true
+                slider: true,
+                enable: true,
+                position: 'left'
             }
         },
         cropme: {},

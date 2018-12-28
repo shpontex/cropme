@@ -57,6 +57,29 @@
             </div>
             <div class="row mt-5" id="app">
                 <div class="col-md-6">
+
+                    <div id="cropme"></div>
+                    <!-- Modal -->
+                    <div class="modal fade" id="cropmeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Cropme result</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <img id="cropme-result" src="" alt="cropme">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                
+                </div>
+                <div class="col-md-6">
                     <div class="options">
                         <div class="title">Viewport Type</div>
                         <select class="form-control" v-model="options.viewport.type">
@@ -115,10 +138,22 @@
                     <div class="options">
                         <div class="title">Rotation</div>
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-4">
+                                enable: <select class="form-control" v-model="options.rotation.enable">
+                                    <option :value="true">true (default)</option>
+                                    <option :value="false">false</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
                                 slider: <select class="form-control" v-model="options.rotation.slider">
                                     <option :value="true">true</option>
                                     <option :value="false">false (default)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                Position: <select class="form-control" v-model="options.rotation.position">
+                                    <option value="left">left</option>
+                                    <option value="right">right (default)</option>
                                 </select>
                             </div>
                         </div>
@@ -127,27 +162,6 @@
                         <button class="btn btn-outline-danger" @click="reset">Reset </button>
                         <button class="btn btn-outline-success float-right" @click="crop">Crop me</button>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div id="cropme"></div>
-                    <!-- Modal -->
-                    <div class="modal fade" id="cropmeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Cropme result</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body text-center">
-                                    <img id="cropme-result" src="" alt="cropme">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
                 <div class="mt-5 w-100 p-3 output">
                     <pre><code>{{ options}}</code></pre>
