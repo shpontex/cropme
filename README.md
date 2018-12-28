@@ -100,7 +100,7 @@ this class will be added to the cropme container to add custom css
 ## Methods
 
 ### bind({url,position,scale,angle})
-bind an image to cropme
+bind the image and return a promise after the image is loaded
 #### parameters:
 * url: the url of the image to bind
 * position: an object that contains the x and y coordinates
