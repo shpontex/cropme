@@ -427,7 +427,7 @@ import './cropme.sass'
         if (self.options.zoom.slider) {
           properties.slider.value = scale
         }
-        properties.deg = obj.deg || 0
+        properties.deg = obj.angle || 0
         properties.image.style.transform = transform.call(self)
         properties.image.style.transformOrigin = transformOrigin.call(self, properties.origin_x, properties.origin_y)
         properties.image.style.opacity = 1
