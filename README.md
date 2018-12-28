@@ -51,12 +51,10 @@ the values in the examples below are the default values
 ### container
 the container of the cropper
 ```js
-{
-    container: {
-        width: 300, // the outer container width
-        height: 300 // the outer container height
-    }
-}
+ container: {
+     width: 300, // the outer container width
+     height: 300 // the outer container height
+ }
 ```
 ### Viewport
 the part that will be cropped
@@ -124,6 +122,9 @@ $('#myImage').cropme('bind',{
 rotate the image by the given angle
 #### options: required
 * an int of the angle of rotation in degree
+```js
+$('#myImage').cropme('rotate',90)
+```
 ### export({type,width,scale})
 return a promise that return the cropped image result
 #### parameters
@@ -152,3 +153,6 @@ return an object of the image position
 ```
 ### destroy()
 destroy the cropme instance
+```js
+$('#myImage').cropme('destroy')
+```
