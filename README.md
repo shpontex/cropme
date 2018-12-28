@@ -35,7 +35,7 @@ new Cropme(el,options)
 <div id="container"></div>
 
 <script>
-$('#container').cropme(options)
+$('#container').cropme(method,options)
 $('#container').cropme('bind',{
     url: 'images/naruto.jpg'
 })
@@ -47,14 +47,14 @@ $('#myImage').cropme()
 </script>
 ```
 ## Options
-the values in the example are the default values
-### container: Object
+the values in the examples below are the default values
+### container
 the container of the cropper
 ```js
 {
     container: {
-        width: 300,
-        height: 300
+        width: 300, // the outer container width
+        height: 300 // the outer container height
     }
 }
 ```
@@ -83,7 +83,7 @@ zoom: {
 }
 ```
 ### Rotation
-the rotation options
+the image rotation options
 ```js
 rotation: {
   slider: false, // show or hide the slider, Bool
@@ -101,19 +101,36 @@ this class will be added to the cropme container to add custom css
 
 ## Methods
 
-### bind(options)
+### bind({url,position,scale,angle})
+bind an image to cropme
+#### parameters:
+* url: the url of the image to bind
+* position: an object that contains the x and y coordinates
+* scale: the scale of the image, 1 is the default image size
+* angle: the rotation of the image by an angle in degree
 ```js
-{
-    url:
-}
+$('#myImage').cropme('bind',{
+    url: 'images/naruto.jpg',
+    position:{
+        x: 230,
+        y: 30
+    },
+    scale: 1.3,
+    angle: 90
+
+})
 ```
+### rotate(angle)
+rotate the image by the given angle
+#### options: required
+* an int of the angle of rotation in degree
 ### export({type,width,scale})
-return the cropped image result
+return a promise that return the cropped image result
 #### parameters
 * type: the canvas export type , default is `base64`
-* width: // the with of the output images, the height will be proportional
-* scale: 2 // scale 1 is the original image size, this will override the width params  
-> export() without options return 'base64' image and original viewport size
+* width: the width of the output images, the height will be proportional
+* scale: scale 1 is the original image size, this will override the width params  
+> export() without options return 'base64' image and the original viewport size
 ```js
 $('#myImage').cropme('export','blob')
 
@@ -133,3 +150,5 @@ return an object of the image position
     deg: 45 // the image rotation in degree
 }
 ```
+### destroy()
+destroy the cropme instance
