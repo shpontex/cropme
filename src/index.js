@@ -130,9 +130,9 @@ import './cropme.sass'
     this.properties.container.appendChild(this.properties.image)
   }
 
-  function createViewport(view_port) {
+  function createViewport() {
 
-    const viewport = this.properties.viewport = view_port || document.createElement('div')
+    const viewport = this.properties.viewport = this.properties.viewport || document.createElement('div')
     const options = this.options
     options.viewport.width = options.viewport.width > options.container.width ? options.container.width : options.viewport.width
     options.viewport.height = options.viewport.height > options.container.height ? options.container.height : options.viewport.height
@@ -459,7 +459,7 @@ import './cropme.sass'
     }
     reload(options) {
       this.options = nestedObjectAssign(defaultOptions, options)
-      createViewport.call(this, this.properties.viewport)
+      createViewport.call(this)
       createSlider.call(this)
       createRotationSlider.call(this)
     }
