@@ -14,8 +14,7 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "cropme.css",
-      chunkFilename: "[id].css"
+      filename: "cropme.css"
     }),
     new BannerPlugin({
       banner: name + homepage + copyright
