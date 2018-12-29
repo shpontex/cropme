@@ -44,7 +44,7 @@ npm install cropme
 ### Syntax
 
 ```js
-new Cropme(element, options)
+new Cropme(element, options);
 ```
 
 - **element** (`HTMLElement`, required): *the cropper wrapping HTML element.
