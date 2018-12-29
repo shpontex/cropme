@@ -97,15 +97,13 @@ Must be a [flow content element](https://developer.mozilla.org/en-US/docs/Web/Gu
 
 ## Options
 
-The values in the examples below are the default values.
-
 ### Container
 
 - Target: the container of the cropper.
 - Key: `container`
 - Parameters:
-  - **width** (`int`, unit: `px`, default: `300`): *the outer container width*
-  - **height** (`int`, unit: `px`, default: `300`): *the outer container height*
+  - **width** (`int`, default: `300`): *the outer container width*
+  - **height** (`int`, default: `300`): *the outer container height*
 
 #### Example
 
@@ -124,7 +122,7 @@ container: {
   - **height** (`int`, default: `100`): *the viewport height*
   - **border** (`object`): *the viewport frame border*
     - **enable** (`bool`, default: `true`): *toggle the border*
-    - **width** (`int`, unit: `px`, default: `2`): *the border width*
+    - **width** (`int`, default: `2`): *the border width*
     - **color** (`string`, unit: `hex, rgba, hsl`, default: `#fff`): *the border color*
 
 #### Example
