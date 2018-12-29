@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://radowan@bitbucket.org/radowan/cropme.git"
+    "url": "git+https://github.com/shpontex/cropme.git"
   },
   "keywords": [
     "javascript",
