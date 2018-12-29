@@ -167,7 +167,7 @@ $('#myImage').cropme('export',{
 })
 ```
 
-### position() Object
+### position()
 return an object of the image position
 ```js
 {
