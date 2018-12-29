@@ -2,6 +2,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const { BannerPlugin } = require('webpack');
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const path = require('path');
 
 const package = require('./package.json')
 const name = package.name + ' ' + package.version + "\n"
@@ -12,11 +13,15 @@ const env = process.env.NODE_ENV
 module.exports = {
   watch: env == 'develop',
   output: {
+    path: path.resolve(__dirname, ""),
+    filename: 'dist/cropme.min.js'
+  },
+  devServer: {
     filename: 'cropme.min.js',
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "cropme.min.css"
+      filename: "dist/cropme.min.css"
     }),
     new BannerPlugin({
       banner: name + homepage + copyright

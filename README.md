@@ -329,3 +329,12 @@ Object {
 ```js
 $('#myImage').cropme('destroy');
 ```
+
+## Contributing
+Thank you for your contribution to this project.
+
+### Installation
+Fork the project then
+```
+npm install && npm run dev
+```
