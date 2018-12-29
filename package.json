@@ -2,7 +2,7 @@
   "name": "cropme",
   "version": "1.0.0",
   "description": "Javascript image cropper",
-  "main": "cropme.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prod": "NODE_ENV=production webpack --mode=production",

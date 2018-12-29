@@ -380,7 +380,7 @@ import './cropme.sass'
         el.parentNode.insertBefore(this.properties.wrapper, el.previousSibling)
         el.parentNode.removeChild(el)
       }
-      this.properties.wrapper.className += 'cropme-wrapper ' + this.options.customClass
+      this.properties.wrapper.className += ' cropme-wrapper ' + this.options.customClass
       createContext.call(this)
 
       if (this.properties.image.src) {
