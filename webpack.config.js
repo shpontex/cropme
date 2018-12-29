@@ -7,14 +7,16 @@ const package = require('./package.json')
 const name = package.name + ' ' + package.version + "\n"
 const homepage = package.homepage + '\n\n'
 const copyright = 'Copyright 2018 khereddine radhouane\nReleased under the MIT license\n'
+const env = process.env.NODE_ENV
 
 module.exports = {
+  watch: env == 'develop',
   output: {
-    filename: 'cropme.js',
+    filename: 'cropme.min.js',
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "cropme.css"
+      filename: "cropme.min.css"
     }),
     new BannerPlugin({
       banner: name + homepage + copyright

@@ -16,8 +16,8 @@ import './cropme.sass'
             return cropme.position()
           case 'bind':
             return cropme.bind(obj)
-          case 'export':
-            return cropme.export(obj)
+          case 'crop':
+            return cropme.crop(obj)
           case 'rotate':
             return cropme.rotate(obj)
           case 'reload':
@@ -447,7 +447,7 @@ import './cropme.sass'
       this.properties.rotate_originy = oy
       this.properties.image.style.transform = transform.call(this)
     }
-    export (options) {
+    crop (options) {
       let canvas = createCanvas.call(this, options)
       options = typeof options === 'object' ? options.type : options
       return new Promise(resolve => {
