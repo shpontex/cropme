@@ -50,7 +50,7 @@ new Vue({
             this.el = document.getElementById('cropme')
             this.cropme = new Cropme(this.el, this.options)
             this.cropme.bind({
-                url: '/images/pic.jpeg'
+                url: 'images/pic.jpeg'
             })
         },
         crop() {
