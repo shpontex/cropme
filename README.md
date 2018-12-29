@@ -1,17 +1,43 @@
 # Cropme
-Cropme is a customizable and easy to use javascript image cropping plugin
+Cropme is a customizable and easy to use javascript image cropper plugin
+## Features
+ support: zooming, 360 rotation, touch: scale, rotate, move (mobile), multiple croppers
 ## Example
 https://shpontex.github.io/cropme
+## Architechture
+```
+dist/
+├── cropme.min.css   (compressed)
+└── cropme.min.js    (UMD, compressed)
+```
 ## Installation
-NPM: `npm install cropme`
+**npm**
+```
+npm install cropme
+```
 
-Download: [source Code](https://github.com/shpontex/cropme/archive/master.zip), then
+**Download**
+ [source Code](https://github.com/shpontex/cropme/archive/master.zip), then
 ```html
-<link rel="stylesheet" href="cropme.css">
-<script src="cropme.js"></script>
+<link rel="stylesheet" href="path-to/cropme.css">
+<script src="path-to/cropme.js"></script>
+```
+**CDN**
+```html
+<script src="path-to-cdn/cropme.js"></script>
 ```
 ## Usage
-### Vanilla javascript
+### Syntax
+```js
+new Cropme(element,options)
+```
+- element: `HTMLElement`, image or div tag
+  - the html image element or the html div container element 
+
+- options: `Object`
+  - the options form cropme , [options](#options)
+### Example
+**Vanilla javascript**
 ```html
 <div id="container"></div>
 
@@ -30,7 +56,7 @@ new Cropme(el,options)
 </script>
 ```
 
-### Jquery
+**JQuery**
 ```html
 <div id="container"></div>
 
