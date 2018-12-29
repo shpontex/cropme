@@ -55,7 +55,7 @@ new Vue({
         },
         crop() {
             let img = document.getElementById('cropme-result')
-            this.cropme.export({
+            this.cropme.crop({
                 width: 600
             }).then(res => {
                 img.src = res

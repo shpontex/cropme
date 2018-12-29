@@ -253,13 +253,13 @@ $('#myImage').cropme('bind', {
 $('#myImage').cropme('rotate', 90);
 ```
 
-### export()
+### crop()
 
 *Returns a promise with the cropped image.*
 
 #### Arguments
 
-As a parameter, the `export()` function can receive:
+As a parameter, the `crop()` function can receive:
 1. An `Object` containing:
   - **type**
     - **type**: `String`
@@ -277,23 +277,26 @@ As a parameter, the `export()` function can receive:
 
   2. A `String` specifying the exportation format (`base64` or `blob`)
 
-:warning: Calling `export()` without parameters returns a **base64** image with \
+:warning: Calling `crop()` without parameters returns a **base64** image with \
 the original viewport size.
 
 #### Example
 
 ```js
 // string
-$('#myImage').cropme('export', 'blob');
+$('#myImage').cropme('crop', 'blob');
 
 // object
-$('#myImage').cropme('export', {
+$('#myImage').cropme('crop', {
     type: 'base64',
     width: 800
 });
 
 // no parameter
-$('#myImage').cropme('export');
+$('#myImage').cropme('crop')
+    .then(function(output) {
+        // here you can use the base64 output
+    });
 ```
 
 ### position()
@@ -325,4 +328,13 @@ Object {
 
 ```js
 $('#myImage').cropme('destroy');
+```
+
+## Contributing
+Thank you for your contribution to this project.
+
+### Installation
+Fork the project then
+```
+npm install && npm run dev
 ```
