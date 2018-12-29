@@ -1,5 +1,4 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-// const devMode = process.env.NODE_ENV !== 'production'
 
 const { BannerPlugin } = require('webpack');
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
@@ -13,7 +12,6 @@ module.exports = {
   output: {
     filename: 'cropme.js',
   },
-  watch: true,
   plugins: [
     new MiniCssExtractPlugin({
       filename: "cropme.css",
