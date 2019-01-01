@@ -116,12 +116,15 @@ import './cropme.sass'
   }
 
   function createContainer() {
-    const container = document.createElement('div')
+    let container = this.properties.container 
+    
+    if(!container){
+      container = this.properties.container = document.createElement('div')
+      this.properties.wrapper.appendChild(container)
+    }
     container.classList.add('cropme-container')
     container.style.width = this.options.container.width + 'px'
     container.style.height = this.options.container.height + 'px'
-    this.properties.container = container
-    this.properties.wrapper.appendChild(container)
   }
 
   function createImage() {
@@ -464,9 +467,10 @@ import './cropme.sass'
     }
     reload(options) {
       this.options = nestedObjectAssign(defaultOptions, options)
-      createViewport.call(this)
       createSlider.call(this)
+      createContainer.call(this)
       createRotationSlider.call(this)
+      createViewport.call(this)
     }
     destroy() {
       this.properties.wrapper.innerHTML = ''
