@@ -15,7 +15,16 @@
   "keywords": [
     "javascript",
     "image",
-    "crop"
+    "crop",
+    "move",
+    "zoom",
+    "rotate",
+    "scale",
+    "cropme",
+    "cropping",
+    "html",
+    "css",
+    "javascript"
   ],
   "author": "shpontex",
   "license": "MIT",
