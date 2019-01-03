@@ -32,7 +32,8 @@ npm install cropme
 
 **Download**
 
- [Download the project](https://github.com/shpontex/cropme/archive/master.zip) and extract it in your project folder, then import it.
+[Download the project](https://github.com/shpontex/cropme/archive/master.zip) and extract it.\
+then put the dist/cropme.min.css and the dist/cropme.min.js in you project.
 
 ```html
 <link rel="stylesheet" href="path-to/cropme.css">
@@ -206,20 +207,13 @@ The `bind()` method expects an `Object` containing:
   - **type**: `String`
   - **description**: The url of the image to bind.
 - **position**
-  - **type**: `Object` with `x` and `y` keys.
-  - **description**: An object that contains the x and y coordinates.\
+  - **x**: (`int`,the x translation coordinate).
+  - **y**: (`int`,the y translation coordinate).\
   The image is translated from its origin.\
   If not specified, the image is centered horizontaly and verticaly.
-- **scale**
-  - **type**: `number`
-  - **description**: The scale of the image, 1 is the original image size.\
-  If not specified, the image will takes the container's height and scale \
-  automaticaly.
-- **angle**
-  - **description**: The rotation of the image by an angle in degree
-  - **type**: `number`
-  - **unit**: `degree`
-  - **default**: 0
+  - **scale**: (`float`,The scale of the image, 1 is the original image size).\
+  If not specified, the image will takes the container's height and scale automatically.
+  - **angle**: (`int`,The rotation of the image by an angle in degree around its origin).
 
 #### Example
 
@@ -228,7 +222,7 @@ $('#myImage').cropme('bind', {
   url: 'images/naruto.jpg',
   position: {
     x: 230,
-    y: 30,
+    y: -30,
     scale: 1.3,
     angle: 90
   },
