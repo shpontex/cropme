@@ -465,7 +465,7 @@ import './cropme.sass'
       return {
         x: this.properties.x - this.properties.ox,
         y: this.properties.y - this.properties.oy,
-        scale: this.properties.scale,
+        scale: this.properties.scale.toFixed(6),
         angle: parseInt(this.properties.deg)
       }
     }
