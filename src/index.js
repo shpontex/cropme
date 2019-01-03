@@ -403,15 +403,19 @@ import './cropme.sass'
           let containerData = properties.container.getBoundingClientRect()
           let cx = (containerData.width - imageData.width) / 2
           let cy = (containerData.height - imageData.height) / 2
+          let scale = containerData.height / imageData.height
+          let deg = 0
           properties.ox = cx
           properties.oy = cy
 
+
           if (typeof obj.position === 'object') {
-            cx = obj.position.x || cx
-            cy = obj.position.y || cy
+            cx += obj.position.x || 0
+            cy += obj.position.y || 0
+            scale = obj.position.scale || scale 
+            deg = obj.position.angle || deg
           }
 
-          let scale = obj.scale ? obj.scale : containerData.height / imageData.height
           if (options.zoom.max <= options.zoom.min) {
             throw 'Error: max zoom cannot be less or equal to min zoom'
           }
@@ -433,7 +437,7 @@ import './cropme.sass'
           if (self.options.zoom.slider) {
             properties.slider.value = scale
           }
-          properties.deg = obj.angle || 0
+          properties.deg = deg
           properties.image.style.transform = transform.call(self)
           properties.image.style.transformOrigin = transformOrigin.call(self, properties.origin_x, properties.origin_y)
           properties.image.style.opacity = 1
@@ -459,10 +463,10 @@ import './cropme.sass'
     }
     position() {
       return {
-        x: this.properties.x,
-        y: this.properties.y,
+        x: this.properties.x - this.properties.ox,
+        y: this.properties.y - this.properties.oy,
         scale: this.properties.scale,
-        deg: parseInt(this.properties.deg)
+        angle: parseInt(this.properties.deg)
       }
     }
     reload(options) {

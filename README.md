@@ -47,8 +47,7 @@ npm install cropme
 new Cropme(element, options);
 ```
 
-- **element** (`HTMLElement`, required): *the cropper wrapping HTML element.
-Must be a [flow content element](https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Content_categories#Flow_content) or an image.*
+- **element** (`HTMLElement`, required): *the cropper wrapping HTML element, can be a `<div>` or `<img>` tag.
 
 
 - **options** (`Object`, optional): *The configuration options, see [**Options**](#options).*
@@ -209,6 +208,7 @@ The `bind()` method expects an `Object` containing:
 - **position**
   - **type**: `Object` with `x` and `y` keys.
   - **description**: An object that contains the x and y coordinates.\
+  The image is translated from its origin.\
   If not specified, the image is centered horizontaly and verticaly.
 - **scale**
   - **type**: `number`
@@ -228,10 +228,10 @@ $('#myImage').cropme('bind', {
   url: 'images/naruto.jpg',
   position: {
     x: 230,
-    y: 30
+    y: 30,
+    scale: 1.3,
+    angle: 90
   },
-  scale: 1.3,
-  angle: 90
 });
 ```
 
@@ -316,7 +316,7 @@ Object {
   x: 20,
   y: 40,
   scale: 1.4,
-  deg: 45
+  angle: 45
 }
 ```
 
