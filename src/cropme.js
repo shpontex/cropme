@@ -1,4 +1,5 @@
-  const nestedObjectAssign = require('./polyfills')
+  import nestedObjectAssign from '../js/nestedObjectAssign/index'
+
   if (window.jQuery) {
     jQuery.fn.cropme = function (options, obj) {
       if (typeof options === 'object') {

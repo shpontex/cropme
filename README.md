@@ -18,7 +18,9 @@ Support:
 
 ```
 dist/
+├── cropme.css
 ├── cropme.min.css   (compressed)
+├── cropme.js        (UMD)
 └── cropme.min.js    (UMD, compressed)
 ```
 
@@ -36,8 +38,8 @@ npm install cropme
 then put the dist/cropme.min.css and the dist/cropme.min.js in you project.
 
 ```html
-<link rel="stylesheet" href="path-to/cropme.css">
-<script src="path-to/cropme.js"></script>
+<link rel="stylesheet" href="path-to/cropme.min.css">
+<script src="path-to/cropme.min.js"></script>
 ```
 
 ## Usage
@@ -271,8 +273,7 @@ As a parameter, the `crop()` function can receive:
 
   2. A `String` specifying the exportation format (`base64` or `blob`)
 
-:warning: Calling `crop()` without parameters returns a **base64** image with \
-the original viewport size.
+Calling `crop()` without parameters returns a **base64** image with the viewport size.
 
 #### Example
 
@@ -303,10 +304,10 @@ $('#myImage').cropme('crop')
 $('#myImage').cropme('position');
 ```
 
-**Output**
+**Output**: `Object`
 
 ```js
-Object {
+{
   x: 20,
   y: 40,
   scale: 1.4,
@@ -330,5 +331,5 @@ Thank you for your contribution to this project.
 ### Installation
 Fork the project then
 ```
-npm install && npm run dev
+npm install && npm run watch
 ```

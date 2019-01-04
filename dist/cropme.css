@@ -1,0 +1,60 @@
+/*!
+ * cropme v1.1.0
+ * https://shpontex.github.io/cropme
+ *
+ * Copyright 2019 shpontex
+ * Released under the MIT license
+ *
+ * Date: 2019-01-04T10:33:26.521Z
+ */
+.cropme-wrapper {
+  width: 100%;
+  height: 100%; }
+
+.cropme-container {
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto; }
+  .cropme-container img {
+    width: initial !important;
+    cursor: move;
+    opacity: 0;
+    touch-action: none; }
+
+#img {
+  border: 5px solid #f00; }
+
+.viewport {
+  box-sizing: content-box !important;
+  position: absolute;
+  border-style: solid;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  box-shadow: 0 0 2000px 2000px rgba(0, 0, 0, 0.5);
+  z-index: 0;
+  pointer-events: none; }
+  .viewport.circle {
+    border-radius: 50%; }
+
+.cropme-slider, .cropme-rotation-slider {
+  text-align: center; }
+  .cropme-slider input, .cropme-rotation-slider input {
+    -webkit-appearance: none; }
+    .cropme-slider input:disabled, .cropme-rotation-slider input:disabled {
+      opacity: 0.5; }
+    .cropme-slider input::-webkit-slider-runnable-track, .cropme-rotation-slider input::-webkit-slider-runnable-track {
+      height: 3px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 3px; }
+    .cropme-slider input::-webkit-slider-thumb, .cropme-rotation-slider input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      background: #ddd;
+      margin-top: -6px; }
+    .cropme-slider input:focus, .cropme-rotation-slider input:focus {
+      outline: none; }
