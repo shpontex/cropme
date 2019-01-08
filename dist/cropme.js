@@ -540,10 +540,21 @@
     }
 
     _createClass(Cropme, [{
+      key: "resize",
+      value: function resize() {
+        var container = this.properties.container;
+        var image = this.properties.image;
+        this.properties.x = (container.offsetWidth - image.width) / 2;
+        this.properties.y = (container.offsetWidth - image.height) / 2;
+        this.properties.image.style.transform = transform.call(this);
+        createSlider.call(this);
+      }
+    }, {
       key: "bind",
       value: function bind(obj) {
         var _this = this;
 
+        window.onresize = this.resize.bind(this);
         this.properties.image.src = obj.url;
         var properties = this.properties;
         var options = this.options;

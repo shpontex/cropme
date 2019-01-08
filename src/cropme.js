@@ -405,15 +405,27 @@
         })
       }
     }
+    resize(){
+      const container = this.properties.container
+      const image = this.properties.image
+      this.properties.x = (container.offsetWidth - image.width) / 2
+      this.properties.y = (container.offsetWidth - image.height) / 2
+      this.properties.image.style.transform = transform.call(this)
+      createSlider.call(this)
+      
+    }
     bind(obj) {
+      window.onresize = this.resize.bind(this)
       this.properties.image.src = obj.url
       let properties = this.properties
       let options = this.options
       let self = this
       return new Promise(resolve => {
         this.properties.image.onload = function () {
+          
           let imageData = properties.image.getBoundingClientRect()
           let containerData = properties.container.getBoundingClientRect()
+          
           let cx = (containerData.width - imageData.width) / 2
           let cy = (containerData.height - imageData.height) / 2
           let scale = containerData.height / imageData.height
