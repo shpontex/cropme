@@ -171,7 +171,7 @@
     let ox = origin.x
     let oy = origin.y
     let angle = -parseInt(this.properties.deg) * Math.PI / 180
-    if (!this.options.rotation.origin) {
+    if (this.options.transformOrigin === 'viewport') {
       let deg = this.properties.deg
       this.properties.deg = 0
       this.properties.image.style.transform = transform.call(this)
@@ -338,18 +338,18 @@
     const viewportData = this.properties.viewport.getBoundingClientRect()
     const x = xs * (imageData.x - viewportData.x - this.options.viewport.border.width)
     const y = ys * (imageData.y - viewportData.y - this.options.viewport.border.width)
-    const image_origin_rotation = this.options.rotation.origin
+    const image_origin_rotation = this.options.transformOrigin
 
     const tx = (nx - this.properties.x) * xs
     const ty = (ny - this.properties.y) * ys
 
-    if (image_origin_rotation) {
+    if (image_origin_rotation === 'image') {
       ctx.translate(tx, ty)
     }
     ctx.translate(width / 2, height / 2)
     ctx.rotate(deg * Math.PI / 180)
 
-    if (image_origin_rotation) {
+    if (image_origin_rotation === 'image') {
       ctx.translate(-width / 2, -height / 2)
     } else {
       ctx.translate(-width / 2 + tx, -height / 2 + ty)
@@ -358,7 +358,7 @@
     ctx.drawImage(this.properties.image, x, y, imageData.width * xs, imageData.height * ys)
 
     if (this.options.viewport.type === 'circle') {
-      if (image_origin_rotation) {
+      if (image_origin_rotation === 'image') {
         ctx.translate(width / 2, height / 2)
       } else {
         ctx.translate(width / 2 - tx, height / 2 - ty)
@@ -366,7 +366,7 @@
       ctx.rotate(-deg * Math.PI / 180)
       ctx.translate(-width / 2, -height / 2)
       ctx.scale(1, this.options.viewport.height / this.options.viewport.width)
-      if (image_origin_rotation) {
+      if (image_origin_rotation === 'image') {
         ctx.translate(-tx * 2, -ty * 2)
       } else {
         ctx.translate(-tx, -ty)
@@ -432,7 +432,7 @@
           let deg = 0
           properties.ox = cx
           properties.oy = cy
-          let origin = 'center'
+          let origin = {}
 
           if (typeof obj.position === 'object') {
             cx = obj.position.x ? obj.position.x + cx : cx
@@ -440,7 +440,7 @@
             scale = obj.position.scale || scale
             deg = obj.position.angle || deg
             origin = obj.position.origin || origin
-            options.rotation.origin = !obj.position.origin === 'object'
+            options.transformOrigin = obj.position.origin === 'object' ? 'viewport' : 'image'
           }
 
           if (options.zoom.max <= options.zoom.min) {
@@ -500,7 +500,7 @@
         scale: parseFloat(this.properties.scale.toFixed(4)),
         angle: parseInt(this.properties.deg),
       }
-      if (!this.options.rotation.origin) {
+      if (this.options.transformOrigin === 'viewport') {
         position.origin = getOrigin.call(this)
       }
       return position
@@ -535,6 +535,7 @@
         color: '#fff'
       }
     },
+    transformOrigin: 'viewport',
     zoom: {
       min: 0.01,
       max: 3,
@@ -544,7 +545,6 @@
     },
     customClass: '',
     rotation: {
-      origin: false,
       slider: false,
       enable: true,
       position: 'right'

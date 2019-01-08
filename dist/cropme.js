@@ -5,7 +5,7 @@
  * Copyright 2019 shpontex
  * Released under the MIT license
  *
- * Date: 2019-01-08T01:33:37.656Z
+ * Date: 2019-01-08T07:43:56.304Z
  */
 
 (function (global, factory) {
@@ -288,7 +288,7 @@
     var oy = origin.y;
     var angle = -parseInt(this.properties.deg) * Math.PI / 180;
 
-    if (!this.options.rotation.origin) {
+    if (this.options.transformOrigin === 'viewport') {
       var deg = this.properties.deg;
       this.properties.deg = 0;
       this.properties.image.style.transform = transform.call(this);
@@ -462,18 +462,18 @@
     var viewportData = this.properties.viewport.getBoundingClientRect();
     var x = xs * (imageData.x - viewportData.x - this.options.viewport.border.width);
     var y = ys * (imageData.y - viewportData.y - this.options.viewport.border.width);
-    var image_origin_rotation = this.options.rotation.origin;
+    var image_origin_rotation = this.options.transformOrigin;
     var tx = (nx - this.properties.x) * xs;
     var ty = (ny - this.properties.y) * ys;
 
-    if (image_origin_rotation) {
+    if (image_origin_rotation === 'image') {
       ctx.translate(tx, ty);
     }
 
     ctx.translate(width / 2, height / 2);
     ctx.rotate(deg * Math.PI / 180);
 
-    if (image_origin_rotation) {
+    if (image_origin_rotation === 'image') {
       ctx.translate(-width / 2, -height / 2);
     } else {
       ctx.translate(-width / 2 + tx, -height / 2 + ty);
@@ -482,7 +482,7 @@
     ctx.drawImage(this.properties.image, x, y, imageData.width * xs, imageData.height * ys);
 
     if (this.options.viewport.type === 'circle') {
-      if (image_origin_rotation) {
+      if (image_origin_rotation === 'image') {
         ctx.translate(width / 2, height / 2);
       } else {
         ctx.translate(width / 2 - tx, height / 2 - ty);
@@ -492,7 +492,7 @@
       ctx.translate(-width / 2, -height / 2);
       ctx.scale(1, this.options.viewport.height / this.options.viewport.width);
 
-      if (image_origin_rotation) {
+      if (image_origin_rotation === 'image') {
         ctx.translate(-tx * 2, -ty * 2);
       } else {
         ctx.translate(-tx, -ty);
@@ -569,7 +569,7 @@
             var deg = 0;
             properties.ox = cx;
             properties.oy = cy;
-            var origin = 'center';
+            var origin = {};
 
             if (_typeof(obj.position) === 'object') {
               cx = obj.position.x ? obj.position.x + cx : cx;
@@ -577,7 +577,7 @@
               scale = obj.position.scale || scale;
               deg = obj.position.angle || deg;
               origin = obj.position.origin || origin;
-              options.rotation.origin = !obj.position.origin === 'object';
+              options.transformOrigin = obj.position.origin === 'object' ? 'viewport' : 'image';
             }
 
             if (options.zoom.max <= options.zoom.min) {
@@ -647,7 +647,7 @@
           angle: parseInt(this.properties.deg)
         };
 
-        if (!this.options.rotation.origin) {
+        if (this.options.transformOrigin === 'viewport') {
           position.origin = getOrigin.call(this);
         }
 
@@ -690,6 +690,7 @@
         color: '#fff'
       }
     },
+    transformOrigin: 'viewport',
     zoom: {
       min: 0.01,
       max: 3,
@@ -699,7 +700,6 @@
     },
     customClass: '',
     rotation: {
-      origin: false,
       slider: false,
       enable: true,
       position: 'right'
