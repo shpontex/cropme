@@ -24,6 +24,7 @@ new Vue({
         slider: true
       },
       rotation: {
+        origin: false,
         slider: true,
         enable: true,
         position: 'left'

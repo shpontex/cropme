@@ -1,11 +1,11 @@
 /*!
- * cropme v1.1.0
+ * cropme v1.2.0
  * https://shpontex.github.io/cropme
  *
  * Copyright 2019 shpontex
  * Released under the MIT license
  *
- * Date: 2019-01-04T10:33:26.521Z
+ * Date: 2019-01-08T01:33:37.656Z
  */
 
 (function (global, factory) {
@@ -274,6 +274,52 @@
     this.properties.container.appendChild(viewport);
   }
 
+  function getOrigin() {
+    var origin = this.properties.image.style.transformOrigin.split('px ');
+    return {
+      x: parseFloat(origin[0]),
+      y: parseFloat(origin[1])
+    };
+  }
+
+  function setRotationOrigin() {
+    var origin = getOrigin.call(this);
+    var ox = origin.x;
+    var oy = origin.y;
+    var angle = -parseInt(this.properties.deg) * Math.PI / 180;
+
+    if (!this.options.rotation.origin) {
+      var deg = this.properties.deg;
+      this.properties.deg = 0;
+      this.properties.image.style.transform = transform.call(this);
+      var scale = this.properties.scale,
+          imageData = this.properties.image.getBoundingClientRect(),
+          viewportData = this.properties.viewport.getBoundingClientRect(),
+          top = viewportData.top - imageData.top + viewportData.height / 2,
+          left = viewportData.left - imageData.left + viewportData.width / 2,
+          cx,
+          cy;
+      var bx = left / scale;
+      var by = top / scale;
+      var npx = bx - ox;
+      var npy = by - oy;
+      var x = npx * Math.cos(angle) - npy * Math.sin(angle);
+      var y = npx * Math.sin(angle) + npy * Math.cos(angle);
+      cx = ox + x;
+      cy = oy + y;
+      this.properties.x = this.options.container.width / 2 - cx;
+      this.properties.y = this.options.container.height / 2 - cy;
+      this.properties.image.style.transformOrigin = transformOrigin.call(this, cx, cy);
+      this.properties.deg = deg;
+      this.properties.image.style.transform = transform.call(this);
+    } else {
+      this.properties.x -= this.properties.origin_x - ox;
+      this.properties.y -= this.properties.origin_y - oy;
+      this.properties.image.style.transformOrigin = transformOrigin.call(this, this.properties.origin_x, this.properties.origin_y);
+      this.properties.image.style.transform = transform.call(this);
+    }
+  }
+
   function createContext() {
     createContainer.call(this);
     createRotationSlider.call(this);
@@ -360,15 +406,7 @@
       document.removeEventListener('touchend', up);
       self.properties.od = 0;
       self.properties.odeg = 0;
-      var scale = self.properties.scale,
-          imageData = self.properties.image.getBoundingClientRect(),
-          viewportData = self.properties.viewport.getBoundingClientRect(),
-          top = viewportData.top - imageData.top + viewportData.height / 2,
-          left = viewportData.left - imageData.left + viewportData.width / 2,
-          origin = self.properties.image.style.transformOrigin.split('px ');
-      var ox = parseInt(origin[0]);
-      var oy = parseInt(origin[1]);
-      var angle = -parseInt(self.properties.deg) * Math.PI / 180; // let deg = -parseInt(self.properties.deg)
+      setRotationOrigin.call(self);
     };
 
     var mousewheel = function mousewheel(e) {
@@ -419,56 +457,49 @@
       this.properties.image.style.transform = transform.call(this);
     }
 
-    if (deg !== 0) {
-      transformImage.call(this, 0, this.properties.ox, this.properties.oy);
-    }
-
+    transformImage.call(this, 0, this.properties.ox, this.properties.oy);
     var imageData = this.properties.image.getBoundingClientRect();
     var viewportData = this.properties.viewport.getBoundingClientRect();
     var x = xs * (imageData.x - viewportData.x - this.options.viewport.border.width);
     var y = ys * (imageData.y - viewportData.y - this.options.viewport.border.width);
+    var image_origin_rotation = this.options.rotation.origin;
+    var tx = (nx - this.properties.x) * xs;
+    var ty = (ny - this.properties.y) * ys;
 
-    if (deg !== 0) {
-      ctx.translate((nx - this.properties.x) * xs, (ny - this.properties.y) * ys);
-      ctx.translate(width / 2, height / 2);
-      ctx.rotate(deg * Math.PI / 180);
+    if (image_origin_rotation) {
+      ctx.translate(tx, ty);
+    }
+
+    ctx.translate(width / 2, height / 2);
+    ctx.rotate(deg * Math.PI / 180);
+
+    if (image_origin_rotation) {
       ctx.translate(-width / 2, -height / 2);
+    } else {
+      ctx.translate(-width / 2 + tx, -height / 2 + ty);
     }
 
     ctx.drawImage(this.properties.image, x, y, imageData.width * xs, imageData.height * ys);
 
     if (this.options.viewport.type === 'circle') {
-      ctx.translate(width / 2, height / 2);
+      if (image_origin_rotation) {
+        ctx.translate(width / 2, height / 2);
+      } else {
+        ctx.translate(width / 2 - tx, height / 2 - ty);
+      }
+
       ctx.rotate(-deg * Math.PI / 180);
       ctx.translate(-width / 2, -height / 2);
       ctx.scale(1, this.options.viewport.height / this.options.viewport.width);
-      var diff = (this.options.viewport.width - this.options.viewport.height) / 2 * xs;
-      var x_coordinate = (this.properties.x - nx) * xs;
-      var y_coordinate = (this.properties.y - ny) * ys;
 
-      if (diff > 0) {
-        y_coordinate = diff + y_coordinate * 2;
-      } else if (diff < 0) {
-        y_coordinate = diff + y_coordinate / 2;
+      if (image_origin_rotation) {
+        ctx.translate(-tx * 2, -ty * 2);
+      } else {
+        ctx.translate(-tx, -ty);
       }
 
-      ctx.translate(x_coordinate, y_coordinate);
       ctx.globalCompositeOperation = 'destination-in';
-      ctx.arc(width / 2, height / 2, width / 2, 0, 2 * Math.PI);
-      ctx.fill();
-    }
-
-    if (this.options.viewport.type === 'triangle') {
-      ctx.translate(width / 2, height / 2);
-      ctx.rotate(-deg * Math.PI / 180);
-      ctx.translate(-width / 2, -height / 2);
-      ctx.translate((this.properties.x - nx) * xs, (this.properties.y - ny) * ys);
-      ctx.beginPath();
-      ctx.globalCompositeOperation = 'destination-in';
-      ctx.moveTo(width / 2, 0);
-      ctx.lineTo(width, height);
-      ctx.lineTo(0, height);
-      ctx.closePath();
+      ctx.arc(width / 2 + tx, height / 2 + ty, width / 2, 0, 2 * Math.PI);
       ctx.fill();
     }
 
@@ -527,12 +558,15 @@
             var deg = 0;
             properties.ox = cx;
             properties.oy = cy;
+            var origin = 'center';
 
             if (_typeof(obj.position) === 'object') {
-              cx += obj.position.x || 0;
-              cy += obj.position.y || 0;
+              cx = obj.position.x ? obj.position.x + cx : cx;
+              cy = obj.position.y ? obj.position.y + cy : cy;
               scale = obj.position.scale || scale;
               deg = obj.position.angle || deg;
+              origin = obj.position.origin || origin;
+              options.rotation.origin = !obj.position.origin === 'object';
             }
 
             if (options.zoom.max <= options.zoom.min) {
@@ -557,10 +591,15 @@
               properties.slider.value = scale;
             }
 
+            if (self.options.rotation.slider) {
+              properties.rotation_slider.value = deg;
+            }
+
             properties.deg = deg;
             properties.image.style.transform = transform.call(self);
-            properties.image.style.transformOrigin = transformOrigin.call(self, properties.origin_x, properties.origin_y);
+            properties.image.style.transformOrigin = transformOrigin.call(self, origin.x || properties.origin_x, origin.y || properties.origin_y);
             properties.image.style.opacity = 1;
+            setRotationOrigin.call(self);
             resolve(self.properties.image);
           };
         });
@@ -590,12 +629,18 @@
     }, {
       key: "position",
       value: function position() {
-        return {
-          x: this.properties.x - this.properties.ox,
-          y: this.properties.y - this.properties.oy,
-          scale: this.properties.scale.toFixed(6),
+        var position = {
+          x: parseFloat((this.properties.x - this.properties.ox).toFixed(3)),
+          y: parseFloat((this.properties.y - this.properties.oy).toFixed(3)),
+          scale: parseFloat(this.properties.scale.toFixed(4)),
           angle: parseInt(this.properties.deg)
         };
+
+        if (!this.options.rotation.origin) {
+          position.origin = getOrigin.call(this);
+        }
+
+        return position;
       }
     }, {
       key: "reload",
@@ -605,6 +650,7 @@
         createContainer.call(this);
         createRotationSlider.call(this);
         createViewport.call(this);
+        setRotationOrigin.call(this);
       }
     }, {
       key: "destroy",
@@ -642,6 +688,7 @@
     },
     customClass: '',
     rotation: {
+      origin: false,
       slider: false,
       enable: true,
       position: 'right'
