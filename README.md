@@ -10,6 +10,7 @@ Support:
  - Two-dimensional translation
  - Scaling
  - Free rotation
+ - rotation and scale around the image center or the viewport center
  - Multi-touch support (pinch-zoom, two finger rotation, ...)
  - Base64 and blob exportation
  - Multiple croppers
@@ -183,6 +184,21 @@ rotation: {
 }
 ```
 
+### Transform origin
+
+- Target: the image transform origin
+- Parameter:
+  - **transformOrigin** (`string`, default: `viewport`,available: `image`, `viewport`)\
+  *image: the transform origin is the image center*\
+  *viewport: the transform origin is the viewport center*
+
+#### Example
+```js
+{
+  transformOrigin: 'viewport'
+}
+```
+
 ### Custom class
 
 - Target: the container class
@@ -213,9 +229,14 @@ The `bind()` method expects an `Object` containing:
   - **y**: (`int`,the y translation coordinate).\
   The image is translated from its origin.\
   If not specified, the image is centered horizontaly and verticaly.
-  - **scale**: (`float`,The scale of the image, 1 is the original image size).\
+  - **scale**: (`float`,The scale of the image, 1 is the original image size),\
   If not specified, the image will takes the container's height and scale automatically.
   - **angle**: (`int`,The rotation of the image by an angle in degree around its origin).
+  - **origin**: (`object`,The x and y coordonate of the image transform origin),\
+  if origin is set, the `transformOrigin` option will be override and set to `viewport`,\
+  since `image` option means that the transform origin is the center of the image,\
+  in that case `origin` is not required.
+  
 
 #### Example
 
@@ -226,7 +247,11 @@ $('#myImage').cropme('bind', {
     x: 230,
     y: -30,
     scale: 1.3,
-    angle: 90
+    angle: 35,
+    origin: {
+      x: 623.26,
+      y: 1150
+    }
   },
 });
 ```
@@ -296,7 +321,8 @@ $('#myImage').cropme('crop')
 
 ### position()
 
-*Returns an object specifying the image configuration*
+*Returns an object specifying the image position*\
+When you create a new cropme you can bind the image with this position object.
 
 #### Example
 
@@ -308,10 +334,14 @@ $('#myImage').cropme('position');
 
 ```js
 {
-  x: 20,
-  y: 40,
-  scale: 1.4,
-  angle: 45
+  x: 230,
+  y: -30,
+  scale: 1.3,
+  angle: 35,
+  origin: {
+    x: 623.26,
+    y: 1150
+  }
 }
 ```
 
