@@ -5,7 +5,7 @@
  * Copyright 2019 shpontex
  * Released under the MIT license
  *
- * Date: 2019-01-08T01:33:37.656Z
+ * Date: 2019-01-08T07:43:56.304Z
  */
 
 (function (global, factory) {
