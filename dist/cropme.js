@@ -5,7 +5,7 @@
  * Copyright 2019 shpontex
  * Released under the MIT license
  *
- * Date: 2019-01-08T07:43:56.304Z
+ * Date: 2019-01-08T08:46:02.592Z
  */
 
 (function (global, factory) {
@@ -158,6 +158,8 @@
       } else {
         this.properties.rotation_slider.disabled = !this.options.rotation.enable;
       }
+
+      this.properties.rotation_slider.style.width = this.properties.container.offsetWidth + 'px';
     } else {
       if (this.options.rotation.slider) {
         var sliderContainer = document.createElement('div');
@@ -168,7 +170,7 @@
         slider.setAttribute('max', 180);
         slider.setAttribute('step', 1);
         slider.value = 0;
-        slider.style.width = this.options.container.width + 'px';
+        slider.style.width = this.properties.container.offsetWidth + 'px';
         sliderContainer.appendChild(slider);
         this.properties.wrapper.appendChild(sliderContainer);
         var self = this;
@@ -182,13 +184,13 @@
 
   function createSlider() {
     function changeSliderParameter() {
-      var positionX = this.options.container.width / 2 + 12;
+      var positionX = this.properties.container.offsetWidth / 2 + 12;
 
       if (this.options.rotation.position === 'left') {
-        positionX = -this.options.container.width / 2 - 20;
+        positionX = -this.properties.container.offsetWidth / 2 - 20;
       }
 
-      var positionY = this.options.container.height / 2 + 12;
+      var positionY = this.properties.container.offsetHeight / 2 + 12;
       this.properties.sliderContainer.style.transform = 'translate(' + positionX + 'px, ' + positionY + 'px) rotate(-90deg)';
       this.properties.sliderContainer.style.marginTop = '-24px';
       this.properties.slider.disabled = !this.options.zoom.enable;
@@ -211,7 +213,7 @@
         slider.setAttribute('min', this.options.zoom.min);
         slider.setAttribute('max', this.options.zoom.max);
         slider.setAttribute('step', 0.000001);
-        slider.style.width = this.options.container.width + 'px';
+        slider.style.width = this.properties.container.offsetWidth + 'px';
         sliderContainer.appendChild(slider);
         this.properties.wrapper.insertBefore(sliderContainer, this.properties.wrapper.firstChild);
         this.properties.slider.value = this.properties.scale;
@@ -545,9 +547,10 @@
         var container = this.properties.container;
         var image = this.properties.image;
         this.properties.x = (container.offsetWidth - image.width) / 2;
-        this.properties.y = (container.offsetWidth - image.height) / 2;
+        this.properties.y = (container.offsetHeight - image.height) / 2;
         this.properties.image.style.transform = transform.call(this);
         createSlider.call(this);
+        createRotationSlider.call(this);
       }
     }, {
       key: "bind",
