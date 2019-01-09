@@ -47,7 +47,7 @@
       } else {
         this.properties.rotation_slider.disabled = !this.options.rotation.enable
       }
-        this.properties.rotation_slider.style.width = this.properties.container.offsetWidth + 'px'
+      this.properties.rotation_slider.style.width = this.properties.container.offsetWidth + 'px'
     } else {
       if (this.options.rotation.slider) {
         const sliderContainer = document.createElement('div')
@@ -58,7 +58,7 @@
         slider.setAttribute('max', 180)
         slider.setAttribute('step', 1)
         slider.value = 0
-        
+
         slider.style.width = this.properties.container.offsetWidth + 'px'
         sliderContainer.appendChild(slider)
         this.properties.wrapper.appendChild(sliderContainer)
@@ -73,12 +73,17 @@
 
   function createSlider() {
     function changeSliderParameter() {
-      let positionX = this.properties.container.offsetWidth / 2 + 12
+      let diff = (this.properties.wrapper.offsetWidth - this.properties.container.offsetWidth) / 2
+      let positionX = this.properties.container.offsetWidth / 2 + 12 + diff
       if (this.options.rotation.position === 'left') {
-        positionX = -this.properties.container.offsetWidth / 2 - 20
+        positionX = -this.properties.container.offsetWidth / 2 - 20 + diff
       }
-      const positionY = this.properties.container.offsetHeight / 2 + 12
+      let diffH = (this.properties.container.offsetWidth - this.properties.container.offsetHeight) / 2
+      const positionY = this.properties.container.offsetHeight / 2 + 12 - diffH
       this.properties.sliderContainer.style.transform = 'translate(' + positionX + 'px, ' + positionY + 'px) rotate(-90deg)'
+      let sliderOrigin = this.properties.container.offsetWidth / 2
+      this.properties.sliderContainer.style.transformOrigin = sliderOrigin + 'px 12px'
+
       this.properties.sliderContainer.style.marginTop = '-24px'
       this.properties.slider.disabled = !this.options.zoom.enable
     }
@@ -100,7 +105,8 @@
         slider.setAttribute('min', this.options.zoom.min)
         slider.setAttribute('max', this.options.zoom.max)
         slider.setAttribute('step', 0.000001)
-        slider.style.width = this.properties.container.offsetWidth + 'px'
+        slider.style.width = this.properties.container.offsetHeight + 'px'
+        sliderContainer.style.width = this.properties.container.offsetHeight + 'px'
 
         sliderContainer.appendChild(slider)
         this.properties.wrapper.insertBefore(sliderContainer, this.properties.wrapper.firstChild)
@@ -122,7 +128,7 @@
       this.properties.wrapper.appendChild(container)
     }
     container.classList.add('cropme-container')
-    container.style.width = this.options.container.width + 'px'
+    container.style.width = this.options.container.width + (typeof this.options.container.width === 'string' ? '' : 'px')
     container.style.height = this.options.container.height + 'px'
   }
 
@@ -137,18 +143,24 @@
   function createViewport() {
 
     const viewport = this.properties.viewport = this.properties.viewport || document.createElement('div')
+    const container = this.properties.container
     const options = this.options
-    options.viewport.width = options.viewport.width > options.container.width ? options.container.width : options.viewport.width
-    options.viewport.height = options.viewport.height > options.container.height ? options.container.height : options.viewport.height
+    options.viewport.width = options.viewport.width > container.offsetWidth ? container.offsetWidth : options.viewport.width
+    options.viewport.height = options.viewport.height > container.offsetHeight ? container.offsetHeight : options.viewport.height
     viewport.style.width = options.viewport.width + 'px'
     viewport.style.height = options.viewport.height + 'px'
     viewport.className = 'viewport'
     if (options.viewport.type === 'circle') {
       viewport.className = 'viewport circle'
     }
+    // if(options.viewport.width < container.offsetWidth){
+    //   options.viewport.width = container.offsetWidth
+    // }
+    // console.log(options.viewport.width);
+    
 
     if (options.viewport.border.enable) {
-      let viewport_border = (options.container.width - options.viewport.width) / 2
+      let viewport_border = (container.offsetWidth - options.viewport.width) / 2
       options.viewport.border.width = viewport_border < options.viewport.border.width ? viewport_border : options.viewport.border.width
     } else {
       options.viewport.border.width = 0
@@ -177,6 +189,7 @@
       this.properties.deg = 0
       this.properties.image.style.transform = transform.call(this)
       let scale = this.properties.scale,
+        container = this.properties.container,
         imageData = this.properties.image.getBoundingClientRect(),
         viewportData = this.properties.viewport.getBoundingClientRect(),
         top = (viewportData.top - imageData.top) + (viewportData.height / 2),
@@ -195,8 +208,8 @@
       cx = ox + x
       cy = oy + y
 
-      this.properties.x = this.options.container.width / 2 - cx
-      this.properties.y = this.options.container.height / 2 - cy
+      this.properties.x = container.offsetWidth / 2 - cx
+      this.properties.y = container.offsetHeight / 2 - cy
       this.properties.image.style.transformOrigin = transformOrigin.call(this, cx, cy)
       this.properties.deg = deg
       this.properties.image.style.transform = transform.call(this)
@@ -359,6 +372,7 @@
     ctx.drawImage(this.properties.image, x, y, imageData.width * xs, imageData.height * ys)
 
     if (this.options.viewport.type === 'circle') {
+    let diff = (this.options.viewport.width - this.options.viewport.height)
       if (image_origin_rotation === 'image') {
         ctx.translate(width / 2, height / 2)
       } else {
@@ -372,6 +386,10 @@
       } else {
         ctx.translate(-tx, -ty)
       }
+      let d = diff - ty
+      console.log(diff,ny-this.properties.y);
+      
+     ctx.translate(0,d)
       ctx.globalCompositeOperation = 'destination-in'
       ctx.arc(width / 2 + tx, height / 2 + ty, width / 2, 0, 2 * Math.PI)
       ctx.fill()
@@ -406,15 +424,26 @@
         })
       }
     }
-    resize(){
+    resize() {
       const container = this.properties.container
-      const image = this.properties.image
-      this.properties.x = (container.offsetWidth - image.width) / 2
-      this.properties.y = (container.offsetHeight - image.height) / 2
-      this.properties.image.style.transform = transform.call(this)
-      createSlider.call(this)
-      createRotationSlider.call(this)
-      
+      let newW = this.properties.container_w - container.offsetWidth
+      let newH = this.properties.container_h - container.offsetHeight
+
+      // if (newW >= this.options.viewport.width) {
+        this.properties.x -= newW / 2
+        this.properties.y -= newH / 2
+
+        this.properties.container_w = container.offsetWidth
+        this.properties.container_h = container.offsetHeight
+
+        this.properties.ox -= newW / 2
+        this.properties.oy -= newH / 2
+
+        this.properties.image.style.transform = transform.call(this)
+        createSlider.call(this)
+        createRotationSlider.call(this)
+      // }
+
     }
     bind(obj) {
       window.onresize = this.resize.bind(this)
@@ -424,10 +453,10 @@
       let self = this
       return new Promise(resolve => {
         this.properties.image.onload = function () {
-          
+
           let imageData = properties.image.getBoundingClientRect()
           let containerData = properties.container.getBoundingClientRect()
-          
+
           let cx = (containerData.width - imageData.width) / 2
           let cy = (containerData.height - imageData.height) / 2
           let scale = containerData.height / imageData.height
@@ -459,6 +488,8 @@
           properties.x = cx
           properties.y = cy
 
+          properties.container_w = containerData.width
+          properties.container_h = containerData.height
           properties.origin_x = imageData.width / 2
           properties.origin_y = imageData.height / 2
 

@@ -184,14 +184,18 @@
 
   function createSlider() {
     function changeSliderParameter() {
-      var positionX = this.properties.container.offsetWidth / 2 + 12;
+      var diff = (this.properties.wrapper.offsetWidth - this.properties.container.offsetWidth) / 2;
+      var positionX = this.properties.container.offsetWidth / 2 + 12 + diff;
 
       if (this.options.rotation.position === 'left') {
-        positionX = -this.properties.container.offsetWidth / 2 - 20;
+        positionX = -this.properties.container.offsetWidth / 2 - 20 + diff;
       }
 
-      var positionY = this.properties.container.offsetHeight / 2 + 12;
+      var diffH = (this.properties.container.offsetWidth - this.properties.container.offsetHeight) / 2;
+      var positionY = this.properties.container.offsetHeight / 2 + 12 - diffH;
       this.properties.sliderContainer.style.transform = 'translate(' + positionX + 'px, ' + positionY + 'px) rotate(-90deg)';
+      var sliderOrigin = this.properties.container.offsetWidth / 2;
+      this.properties.sliderContainer.style.transformOrigin = sliderOrigin + 'px 12px';
       this.properties.sliderContainer.style.marginTop = '-24px';
       this.properties.slider.disabled = !this.options.zoom.enable;
     }
@@ -213,7 +217,8 @@
         slider.setAttribute('min', this.options.zoom.min);
         slider.setAttribute('max', this.options.zoom.max);
         slider.setAttribute('step', 0.000001);
-        slider.style.width = this.properties.container.offsetWidth + 'px';
+        slider.style.width = this.properties.container.offsetHeight + 'px';
+        sliderContainer.style.width = this.properties.container.offsetHeight + 'px';
         sliderContainer.appendChild(slider);
         this.properties.wrapper.insertBefore(sliderContainer, this.properties.wrapper.firstChild);
         this.properties.slider.value = this.properties.scale;
@@ -235,7 +240,7 @@
     }
 
     container.classList.add('cropme-container');
-    container.style.width = this.options.container.width + 'px';
+    container.style.width = this.options.container.width + (typeof this.options.container.width === 'string' ? '' : 'px');
     container.style.height = this.options.container.height + 'px';
   }
 
@@ -253,19 +258,24 @@
 
   function createViewport() {
     var viewport = this.properties.viewport = this.properties.viewport || document.createElement('div');
+    var container = this.properties.container;
     var options = this.options;
-    options.viewport.width = options.viewport.width > options.container.width ? options.container.width : options.viewport.width;
-    options.viewport.height = options.viewport.height > options.container.height ? options.container.height : options.viewport.height;
+    options.viewport.width = options.viewport.width > container.offsetWidth ? container.offsetWidth : options.viewport.width;
+    options.viewport.height = options.viewport.height > container.offsetHeight ? container.offsetHeight : options.viewport.height;
     viewport.style.width = options.viewport.width + 'px';
     viewport.style.height = options.viewport.height + 'px';
     viewport.className = 'viewport';
 
     if (options.viewport.type === 'circle') {
       viewport.className = 'viewport circle';
-    }
+    } // if(options.viewport.width < container.offsetWidth){
+    //   options.viewport.width = container.offsetWidth
+    // }
+    // console.log(options.viewport.width);
+
 
     if (options.viewport.border.enable) {
-      var viewport_border = (options.container.width - options.viewport.width) / 2;
+      var viewport_border = (container.offsetWidth - options.viewport.width) / 2;
       options.viewport.border.width = viewport_border < options.viewport.border.width ? viewport_border : options.viewport.border.width;
     } else {
       options.viewport.border.width = 0;
@@ -295,6 +305,7 @@
       this.properties.deg = 0;
       this.properties.image.style.transform = transform.call(this);
       var scale = this.properties.scale,
+          container = this.properties.container,
           imageData = this.properties.image.getBoundingClientRect(),
           viewportData = this.properties.viewport.getBoundingClientRect(),
           top = viewportData.top - imageData.top + viewportData.height / 2,
@@ -309,8 +320,8 @@
       var y = npx * Math.sin(angle) + npy * Math.cos(angle);
       cx = ox + x;
       cy = oy + y;
-      this.properties.x = this.options.container.width / 2 - cx;
-      this.properties.y = this.options.container.height / 2 - cy;
+      this.properties.x = container.offsetWidth / 2 - cx;
+      this.properties.y = container.offsetHeight / 2 - cy;
       this.properties.image.style.transformOrigin = transformOrigin.call(this, cx, cy);
       this.properties.deg = deg;
       this.properties.image.style.transform = transform.call(this);
@@ -484,6 +495,8 @@
     ctx.drawImage(this.properties.image, x, y, imageData.width * xs, imageData.height * ys);
 
     if (this.options.viewport.type === 'circle') {
+      var diff = this.options.viewport.width - this.options.viewport.height;
+
       if (image_origin_rotation === 'image') {
         ctx.translate(width / 2, height / 2);
       } else {
@@ -500,6 +513,9 @@
         ctx.translate(-tx, -ty);
       }
 
+      var d = diff - ty;
+      console.log(diff, ny - this.properties.y);
+      ctx.translate(0, d);
       ctx.globalCompositeOperation = 'destination-in';
       ctx.arc(width / 2 + tx, height / 2 + ty, width / 2, 0, 2 * Math.PI);
       ctx.fill();
@@ -545,12 +561,18 @@
       key: "resize",
       value: function resize() {
         var container = this.properties.container;
-        var image = this.properties.image;
-        this.properties.x = (container.offsetWidth - image.width) / 2;
-        this.properties.y = (container.offsetHeight - image.height) / 2;
+        var newW = this.properties.container_w - container.offsetWidth;
+        var newH = this.properties.container_h - container.offsetHeight; // if (newW >= this.options.viewport.width) {
+
+        this.properties.x -= newW / 2;
+        this.properties.y -= newH / 2;
+        this.properties.container_w = container.offsetWidth;
+        this.properties.container_h = container.offsetHeight;
+        this.properties.ox -= newW / 2;
+        this.properties.oy -= newH / 2;
         this.properties.image.style.transform = transform.call(this);
         createSlider.call(this);
-        createRotationSlider.call(this);
+        createRotationSlider.call(this); // }
       }
     }, {
       key: "bind",
@@ -597,6 +619,8 @@
 
             properties.x = cx;
             properties.y = cy;
+            properties.container_w = containerData.width;
+            properties.container_h = containerData.height;
             properties.origin_x = imageData.width / 2;
             properties.origin_y = imageData.height / 2;
             properties.scale = scale;
