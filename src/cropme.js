@@ -145,19 +145,18 @@
     const viewport = this.properties.viewport = this.properties.viewport || document.createElement('div')
     const container = this.properties.container
     const options = this.options
-    options.viewport.width = options.viewport.width > container.offsetWidth ? container.offsetWidth : options.viewport.width
-    options.viewport.height = options.viewport.height > container.offsetHeight ? container.offsetHeight : options.viewport.height
+
+
+    const border_width = options.viewport.border.width
+    container.style.width = options.viewport.width > container.offsetWidth ? (options.viewport.width + border_width * 2) + "px" : container.offsetWidth
+    container.style.height = options.viewport.height > container.offsetHeight ? (options.viewport.height + border_width * 2) + "px" : container.offsetHeight
     viewport.style.width = options.viewport.width + 'px'
     viewport.style.height = options.viewport.height + 'px'
+
     viewport.className = 'viewport'
     if (options.viewport.type === 'circle') {
       viewport.className = 'viewport circle'
     }
-    // if(options.viewport.width < container.offsetWidth){
-    //   options.viewport.width = container.offsetWidth
-    // }
-    // console.log(options.viewport.width);
-    
 
     if (options.viewport.border.enable) {
       let viewport_border = (container.offsetWidth - options.viewport.width) / 2
@@ -372,7 +371,6 @@
     ctx.drawImage(this.properties.image, x, y, imageData.width * xs, imageData.height * ys)
 
     if (this.options.viewport.type === 'circle') {
-    let diff = (this.options.viewport.width - this.options.viewport.height)
       if (image_origin_rotation === 'image') {
         ctx.translate(width / 2, height / 2)
       } else {
@@ -386,10 +384,6 @@
       } else {
         ctx.translate(-tx, -ty)
       }
-      let d = diff - ty
-      console.log(diff,ny-this.properties.y);
-      
-     ctx.translate(0,d)
       ctx.globalCompositeOperation = 'destination-in'
       ctx.arc(width / 2 + tx, height / 2 + ty, width / 2, 0, 2 * Math.PI)
       ctx.fill()
@@ -407,6 +401,12 @@
       }
       this.properties = {}
       this.options = nestedObjectAssign(defaultOptions, options)
+      if (this.options.viewport.width > this.options.container.width) {
+        throw 'Error: Viewport width cannot be greater that container width'
+      }
+      if (this.options.viewport.height > this.options.container.height) {
+        throw 'Error: Viewport height cannot be greater that container height'
+      }
       this.properties.wrapper = el
       if (el.tagName.toLowerCase() === 'img') {
         this.properties.image = new Image()
@@ -428,8 +428,9 @@
       const container = this.properties.container
       let newW = this.properties.container_w - container.offsetWidth
       let newH = this.properties.container_h - container.offsetHeight
+      container.style.width = this.options.container.width + (typeof this.options.container.width === 'string' ? '' : 'px')
 
-      // if (newW >= this.options.viewport.width) {
+      if (container.offsetWidth > this.options.viewport.width) {
         this.properties.x -= newW / 2
         this.properties.y -= newH / 2
 
@@ -442,7 +443,9 @@
         this.properties.image.style.transform = transform.call(this)
         createSlider.call(this)
         createRotationSlider.call(this)
-      // }
+      } else {
+        container.style.width = (this.options.viewport.width + this.options.viewport.border.width * 2) + 'px'
+      }
 
     }
     bind(obj) {

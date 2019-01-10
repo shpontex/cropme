@@ -9,8 +9,8 @@ new Vue({
         height: 400
       },
       viewport: {
-        width: 300,
-        height: 100,
+        width: 200,
+        height: 200,
         type: 'circle',
         border: {
           width: 2,
@@ -28,7 +28,7 @@ new Vue({
         enable: true,
         position: 'left'
       },
-      transformOrigin: 'image',
+      transformOrigin: 'viewport',
     },
     cropme: {},
     el: {}

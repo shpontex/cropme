@@ -105,14 +105,20 @@ new Cropme(element, options);
 - Target: the container of the cropper.
 - Key: `container`
 - Parameters:
-  - **width** (`int`, default: `300`): *the outer container width*
+  - **width** (`int|string`, default: `300`): *the outer container width*
   - **height** (`int`, default: `300`): *the outer container height*
 
 #### Example
 
 ```js
+// Fixed container
 container: {
   width: 500,
+  height: 400
+}
+// responsive container
+container: {
+  width: '100%',
   height: 400
 }
 ```
@@ -318,7 +324,6 @@ $('#myImage').cropme('crop')
         // here you can use the base64 output
     });
 ```
-
 ### position()
 
 *Returns an object specifying the image position*\
