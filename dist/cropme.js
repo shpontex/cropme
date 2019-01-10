@@ -1,11 +1,11 @@
 /*!
- * cropme v1.2.0
+ * cropme v1.3.0
  * https://shpontex.github.io/cropme
  *
  * Copyright 2019 shpontex
  * Released under the MIT license
  *
- * Date: 2019-01-08T08:46:02.592Z
+ * Date: 2019-01-10T09:40:26.746Z
  */
 
 (function (global, factory) {
