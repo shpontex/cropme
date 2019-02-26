@@ -74,6 +74,36 @@
   }
 
   function nestedObjectAssign(target) {
+	if (typeof Object.assign != 'function') {
+	  // Must be writable: true, enumerable: false, configurable: true
+	  Object.defineProperty(Object, "assign", {
+		value: function assign(target, varArgs) { // .length of function is 2
+		  'use strict';
+		  if (target == null) { // TypeError if undefined or null
+			throw new TypeError('Cannot convert undefined or null to object');
+		  }
+
+		  var to = Object(target);
+
+		  for (var index = 1; index < arguments.length; index++) {
+			var nextSource = arguments[index];
+
+			if (nextSource != null) { // Skip over if undefined or null
+			  for (var nextKey in nextSource) {
+				// Avoid bugs when hasOwnProperty is shadowed
+				if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+				  to[nextKey] = nextSource[nextKey];
+				}
+			  }
+			}
+		  }
+		  return to;
+		},
+		writable: true,
+		configurable: true
+	  });
+	}
+
     for (var _len = arguments.length, sources = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       sources[_key - 1] = arguments[_key];
     }
@@ -170,18 +200,51 @@
         slider.setAttribute('max', 180);
         slider.setAttribute('step', 1);
         slider.value = 0;
+		slider.classList.add('custom-range');
         slider.style.width = this.properties.container.offsetWidth + 'px';
         sliderContainer.appendChild(slider);
         this.properties.wrapper.appendChild(sliderContainer);
         var self = this;
-        this.properties.rotation_slider.addEventListener('input', function (e) {
-          self.rotate(e.target.value);
-        });
+		if (detectIE() !== false) {
+		  this.properties.rotation_slider.addEventListener('change', function (e) {
+		    self.rotate(e.target.value);
+		  });
+		} else { // ie11 seems to be ignoring 'input' on ranges.
+          this.properties.rotation_slider.addEventListener('input', function (e) {
+            self.rotate(e.target.value);
+		  });
+		}
         this.properties.rotation_slider.disabled = !this.options.rotation.enable;
       }
     }
   }
+  
+	function detectIE() {
+	  var ua = window.navigator.userAgent;
 
+	  var msie = ua.indexOf('MSIE ');
+	  if (msie > 0) {
+		// IE 10 or older => return version number
+		return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+	  }
+
+	  var trident = ua.indexOf('Trident/');
+	  if (trident > 0) {
+		// IE 11 => return version number
+		var rv = ua.indexOf('rv:');
+		return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+	  }
+
+	  var edge = ua.indexOf('Edge/');
+	  if (edge > 0) {
+		// Edge (IE 12+) => return version number
+		return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+	  }
+
+	  // other browser
+	  return false;
+	}
+	
   function createSlider() {
     function changeSliderParameter() {
       var diff = (this.properties.wrapper.offsetWidth - this.properties.container.offsetWidth) / 2;
@@ -218,14 +281,22 @@
         slider.setAttribute('max', this.options.zoom.max);
         slider.setAttribute('step', 0.000001);
         slider.style.width = this.properties.container.offsetHeight + 'px';
+		slider.classList.add('custom-range');
         sliderContainer.style.width = this.properties.container.offsetHeight + 'px';
         sliderContainer.appendChild(slider);
         this.properties.wrapper.insertBefore(sliderContainer, this.properties.wrapper.firstChild);
         this.properties.slider.value = this.properties.scale;
-        this.properties.slider.addEventListener('input', function (e) {
-          self.properties.scale = parseFloat(e.target.value);
-          self.properties.image.style.transform = transform.call(self);
-        });
+		if (detectIE() !== false) {
+		  this.properties.slider.addEventListener('change', function (e) {
+		    self.properties.scale = parseFloat(e.target.value);
+		    self.properties.image.style.transform = transform.call(self);
+		  });
+		} else { // ie11 seems to be ignoring 'input' on ranges.
+          this.properties.slider.addEventListener('input', function (e) {
+            self.properties.scale = parseFloat(e.target.value);
+            self.properties.image.style.transform = transform.call(self);
+          });
+		}
         changeSliderParameter.call(this);
       }
     }
@@ -466,12 +537,18 @@
       this.properties.y = oy;
       this.properties.image.style.transform = transform.call(this);
     }
-
+	
     transformImage.call(this, 0, this.properties.ox, this.properties.oy);
     var imageData = this.properties.image.getBoundingClientRect();
     var viewportData = this.properties.viewport.getBoundingClientRect();
-    var x = xs * (imageData.x - viewportData.x - this.options.viewport.border.width);
-    var y = ys * (imageData.y - viewportData.y - this.options.viewport.border.width);
+	if (detectIE() !== false) {
+      var x = xs * (imageData.left - viewportData.left - this.options.viewport.border.width);
+      var y = ys * (imageData.top - viewportData.top - this.options.viewport.border.width);
+	} else { // IE returns ClientRect instead of DOMRect, that doesn't have x and y : https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
+	  var x = xs * (imageData.x - viewportData.x - this.options.viewport.border.width);
+      var y = ys * (imageData.y - viewportData.y - this.options.viewport.border.width);
+	}
+	
     var image_origin_rotation = this.options.transformOrigin;
     var tx = (nx - this.properties.x) * xs;
     var ty = (ny - this.properties.y) * ys;

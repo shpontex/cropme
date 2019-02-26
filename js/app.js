@@ -35,40 +35,40 @@ new Vue({
   },
   watch: {
     options: {
-      handler(val) {
+      handler: function(val) {
         this.cropme.reload(val)
       },
       deep: true
     }
   },
-  created() {
+  created: function() {
     this.options = JSON.parse(JSON.stringify(this.defaultOptions))
   },
-  mounted() {
+  mounted: function() {
     this.init()
   },
   methods: {
-    init() {
+    init: function() {
       this.el = document.getElementById('cropme')
       this.cropme = new Cropme(this.el, this.options)
       this.cropme.bind({
         url: 'images/pic.jpeg',
       })
     },
-    getPosition() {
+    getPosition: function() {
       this.position = this.cropme.position()
       $('#cropmePosition').modal()
     },
-    crop() {
+    crop: function() {
       let img = document.getElementById('cropme-result')
       this.cropme.crop({
         width: 600
-      }).then(res => {
+      }).then(function(res) {
         img.src = res
         $('#cropmeModal').modal()
       })
     },
-    reset() {
+    reset: function() {
       this.options = JSON.parse(JSON.stringify(this.defaultOptions))
       this.cropme.destroy()
       this.init()
