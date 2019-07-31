@@ -247,7 +247,9 @@ The `bind()` method expects an `Object` containing:
 #### Example
 
 ```js
-$('#myImage').cropme('bind', {
+var container = $('#container').cropme();
+
+container.cropme('bind', {
   url: 'images/naruto.jpg',
   position: {
     x: 230,
@@ -260,6 +262,17 @@ $('#myImage').cropme('bind', {
     }
   },
 });
+
+// If you want to do some changes directly after binding the image
+
+container.cropme('bind', {
+  url: 'images/naruto.jpg',
+})
+.then(function(){
+  //example
+  container.cropme('rotate')
+});
+
 ```
 
 ### rotate()
@@ -277,7 +290,9 @@ $('#myImage').cropme('bind', {
 #### Example
 
 ```js
-$('#myImage').cropme('rotate', 90);
+var myImage = $('#myImage').cropme();
+
+myImage.cropme('rotate', 90);
 ```
 
 ### crop()
@@ -309,17 +324,25 @@ Calling `crop()` without parameters returns a **base64** image with the viewport
 #### Example
 
 ```js
+var myImage = $('#myImage').cropme();
+
 // string
-$('#myImage').cropme('crop', 'blob');
+myImage.cropme('crop', 'blob')
+  .then(function(output) {
+        // here you can use the blob output
+  });
 
 // object
-$('#myImage').cropme('crop', {
+myImage.cropme('crop', {
     type: 'base64',
     width: 800
+}).then(function(output) {
+        // here you can use the base64 output
 });
 
+
 // no parameter
-$('#myImage').cropme('crop')
+myImage.cropme('crop')
     .then(function(output) {
         // here you can use the base64 output
     });
@@ -332,7 +355,9 @@ When you create a new cropme you can bind the image with this position object.
 #### Example
 
 ```js
-$('#myImage').cropme('position');
+var myImage = $('#myImage').cropme();
+
+var position = myImage.cropme('position');
 ```
 
 **Output**: `Object`
@@ -350,6 +375,37 @@ $('#myImage').cropme('position');
 }
 ```
 
+### reload()
+
+*Reload the cropme instance with a new parameters*
+
+#### Example
+
+```js
+var myImage = $('#myImage').cropme({
+  container: {
+    width: 300,
+    height: 200
+  }
+});
+
+myImage.cropme('reload', {
+  container: {
+    width: 455,
+    height: 600
+  },
+  viewport: {
+    width: 150,
+    height: 240,
+    border: {
+      enable: true,
+      width: 5,
+      color: '#f00'
+    }
+  }
+});
+```
+
 ### destroy()
 
 *Destroy the cropme instance*
@@ -357,7 +413,9 @@ $('#myImage').cropme('position');
 #### Example
 
 ```js
-$('#myImage').cropme('destroy');
+var myImage = $('#myImage').cropme();
+
+myImage.cropme('destroy');
 ```
 
 ## Contributing
