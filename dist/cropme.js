@@ -5,7 +5,7 @@
  * Copyright 2019 shpontex
  * Released under the MIT license
  *
- * Date: 2019-01-10T09:40:26.746Z
+ * Date: 2019-07-31T02:20:32.081Z
  */
 
 (function (global, factory) {
@@ -105,7 +105,10 @@
   }
 
   if (window.jQuery) {
-    jQuery.fn.cropme = function (options, obj) {
+    jQuery.fn.cropme = function () {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var obj = arguments.length > 1 ? arguments[1] : undefined;
+
       if (_typeof(options) === 'object') {
         return this.each(function () {
           var cropme = new Cropme(this, options);

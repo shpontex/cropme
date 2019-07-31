@@ -1,7 +1,7 @@
   import nestedObjectAssign from '../js/nestedObjectAssign/index'
 
   if (window.jQuery) {
-    jQuery.fn.cropme = function (options, obj) {
+    jQuery.fn.cropme = function (options = {}, obj) {
       if (typeof options === 'object') {
         return this.each(function () {
           var cropme = new Cropme(this, options)

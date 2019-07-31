@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run build:js && npm run minify:js && npm run minify:css",
     "build:js": "rollup -c",
-    "minify:js": "uglifyjs dist/cropme.js -o dist/cropme.min.js -c -m --comments '/^\/*!/'",
+    "minify:js": "uglifyjs dist/cropme.js -o dist/cropme.min.js -c -m --comments '/^/*!/'",
     "minify:css": "postcss dist/cropme.css -u cssnano -o dist/cropme.min.css --no-map",
     "watch": "rollup -c -w"
   },
