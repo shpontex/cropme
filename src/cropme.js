@@ -8,23 +8,25 @@
           $(this).data('cropme', cropme)
         })
       } else if (typeof options === 'string') {
-        let cropme = this.data('cropme')
-        switch (options) {
-          case 'position':
-            return cropme.position()
-          case 'bind':
-            return cropme.bind(obj)
-          case 'crop':
-            return cropme.crop(obj)
-          case 'rotate':
-            return cropme.rotate(obj)
-          case 'reload':
-            return cropme.reload(obj)
-          case 'destroy':
-            return cropme.destroy()
-          default:
-            throw 'Error: ' + options + ' method not found'
-        }
+        return this.each(function () {
+          var cropme = $(this).data('cropme');
+          switch (options) {
+            case 'position':
+              return cropme.position();
+            case 'bind':
+              return cropme.bind(obj);
+            case 'crop':
+              return cropme.crop(obj);
+            case 'rotate':
+              return cropme.rotate(obj);
+            case 'reload':
+              return cropme.reload(obj);
+            case 'destroy':
+              return cropme.destroy();
+            default:
+              throw 'Error: ' + options + ' method not found';
+          }
+        });
       } else {
         throw 'Error: the argument must be an object or a string'
       }
