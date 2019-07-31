@@ -1,11 +1,11 @@
 /*!
- * cropme v1.3.0
+ * cropme v1.3.1
  * https://shpontex.github.io/cropme
  *
  * Copyright 2019 shpontex
  * Released under the MIT license
  *
- * Date: 2019-07-31T02:20:32.081Z
+ * Date: 2019-07-31T03:04:33.643Z
  */
 
 (function (global, factory) {
@@ -115,30 +115,32 @@
           $(this).data('cropme', cropme);
         });
       } else if (typeof options === 'string') {
-        var cropme = this.data('cropme');
+        return this.each(function () {
+          var cropme = $(this).data('cropme');
 
-        switch (options) {
-          case 'position':
-            return cropme.position();
+          switch (options) {
+            case 'position':
+              return cropme.position();
 
-          case 'bind':
-            return cropme.bind(obj);
+            case 'bind':
+              return cropme.bind(obj);
 
-          case 'crop':
-            return cropme.crop(obj);
+            case 'crop':
+              return cropme.crop(obj);
 
-          case 'rotate':
-            return cropme.rotate(obj);
+            case 'rotate':
+              return cropme.rotate(obj);
 
-          case 'reload':
-            return cropme.reload(obj);
+            case 'reload':
+              return cropme.reload(obj);
 
-          case 'destroy':
-            return cropme.destroy();
+            case 'destroy':
+              return cropme.destroy();
 
-          default:
-            throw 'Error: ' + options + ' method not found';
-        }
+            default:
+              throw 'Error: ' + options + ' method not found';
+          }
+        });
       } else {
         throw 'Error: the argument must be an object or a string';
       }
