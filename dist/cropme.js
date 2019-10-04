@@ -1,11 +1,11 @@
 /*!
- * cropme v1.3.1
+ * cropme v1.3.2
  * https://shpontex.github.io/cropme
  *
  * Copyright 2019 shpontex
  * Released under the MIT license
  *
- * Date: 2019-07-31T06:21:36.034Z
+ * Date: 2019-10-04T12:02:52.726Z
  */
 
 (function (global, factory) {
@@ -666,11 +666,15 @@
       key: "crop",
       value: function crop(options) {
         var canvas = createCanvas.call(this, options);
-        options = _typeof(options) === 'object' ? options.type : options;
+        var output = _typeof(options) === 'object' ? options.type : options;
         return new Promise(function (resolve) {
-          options === 'blob' ? canvas.toBlob(function (blob) {
-            return resolve(URL.createObjectURL(blob));
-          }) : resolve(canvas.toDataURL());
+          if (output === 'blob') {
+            canvas.toBlob(function (blob) {
+              return resolve(URL.createObjectURL(blob));
+            }, options.mimetype, options.quality);
+          } else {
+            resolve(canvas.toDataURL());
+          }
         });
       }
     }, {

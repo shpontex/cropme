@@ -524,9 +524,17 @@
     }
     crop(options) {
       let canvas = createCanvas.call(this, options)
-      options = typeof options === 'object' ? options.type : options
+      const output = (typeof options === 'object') ? options.type : options
       return new Promise(resolve => {
-        options === 'blob' ? canvas.toBlob(blob => resolve(URL.createObjectURL(blob))) : resolve(canvas.toDataURL())
+        if (output === 'blob') {
+          canvas.toBlob(
+            blob => resolve(URL.createObjectURL(blob)),
+            options.mimetype,
+            options.quality
+          )
+        } else {
+          resolve(canvas.toDataURL())
+        }
       })
     }
     position() {
