@@ -316,15 +316,20 @@ As a parameter, the `crop()` function can receive:
     - **type**: `number`
     - **description**: The size of the ouput, relative to the original image size.\
     If `scale` has a value, the `width` get ignored.
-  - **mimetype**
+  - **mimetype***
     - **type**: `String`
     - **default**: `image/png`
-    - **description**: The output image format. (Only with `blob` type)
-  - **quality**
+    - **description**: The output image format.\
+    (Only with `blob` type.)
+  - **quality***
     - **type**: `number`
     - **default**: `0.92` for `image/jpeg` mimetype, `0.80` for `image/webp` mimetype.
     - **description**: A Number between `0` and `1` indicating image quality.\
-    (Only with `blob` type)
+    (Only with `blob` type, and with `image/jpeg` or `image/webp` mimetypes)
+
+  **\*** *For more information about `mimetype` and `quality` arguments, see \
+  [MDN's HTMLCanvasElement.toBlob()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) doc.*
+
 
   2. A `String` specifying the exportation format (`base64` or `blob`)
 
