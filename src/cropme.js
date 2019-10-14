@@ -47,7 +47,9 @@
       } else {
         this.properties.rotation_slider.disabled = !this.options.rotation.enable
       }
-      this.properties.rotation_slider.style.width = this.properties.container.offsetWidth + 'px'
+      if(this.properties.rotation_slider){
+        this.properties.rotation_slider.style.width = this.properties.container.offsetWidth + 'px'
+      }
     } else {
       if (this.options.rotation.slider) {
         const sliderContainer = document.createElement('div')
@@ -278,7 +280,10 @@
           if (!self.properties.od) {
             self.properties.od = touches_dist / self.properties.scale
           }
-          self.properties.scale = self.properties.slider.value = touches_dist / self.properties.od
+          self.properties.scale = touches_dist / self.properties.od
+          if(self.properties.slider) {
+            self.properties.slider.value = self.properties.scale
+          } 
         }
       } else {
         self.properties.x = pageX - x

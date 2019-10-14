@@ -1,6 +1,6 @@
 {
   "name": "cropme",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "Javascript image cropper",
   "main": "src/index.js",
   "scripts": {
@@ -29,6 +29,13 @@
     "javascript"
   ],
   "author": "shpontex",
+  "contributors": [
+    {
+      "name": "Pierre Ellul",
+      "email": "pierreellul.epi@gmail.com",
+      "url": "https://pellul.github.io"
+    }
+  ],
   "license": "MIT",
   "homepage": "https://shpontex.github.io/cropme",
   "devDependencies": {
