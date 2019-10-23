@@ -1,3 +1,8 @@
+<a href="https://www.npmjs.com/package/cropme" target="_blank"><img src="https://img.shields.io/npm/v/cropme.svg" alt="Latest version" /></a>
+<a href="https://www.npmjs.com/package/cropme" target="_blank"><img src="https://img.shields.io/npm/dt/cropme.svg" alt="NPM Downloads" /></a>
+<a href="https://www.npmjs.com/package/cropme" target="_blank"><img src="https://img.shields.io/npm/l/cropme.svg" alt="Package License" /></a>
+[![](https://data.jsdelivr.com/v1/package/npm/cropme/badge?style=rounded)](https://www.jsdelivr.com/package/npm/cropme)
+
 # Cropme
 
 Cropme is a customizable and easy to use javascript image cropper plugin.
@@ -7,13 +12,14 @@ Cropme is a customizable and easy to use javascript image cropper plugin.
 ## Features
 
 Support:
- - Two-dimensional translation
- - Scaling
- - Free rotation
- - rotation and scale around the image center or the viewport center
- - Multi-touch support (pinch-zoom, two finger rotation, ...)
- - Base64 and blob exportation
- - Multiple croppers
+
+- Two-dimensional translation
+- Scaling
+- Free rotation
+- Rotation and scale around the image center or the viewport center
+- Multi-touch support (pinch-zoom, two finger rotation, ...)
+- Base64 and blob exportation
+- Multiple croppers
 
 ## Architecture
 
@@ -41,6 +47,13 @@ then put the dist/cropme.min.css and the dist/cropme.min.js in you project.
 ```html
 <link rel="stylesheet" href="path-to/cropme.min.css">
 <script src="path-to/cropme.min.js"></script>
+```
+
+**CDN**
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropme@latest/dist/cropme.min.css">
+<script src="https://cdn.jsdelivr.net/npm/cropme@latest/dist/cropme.min.js"></script>
 ```
 
 ## Usage
@@ -199,6 +212,7 @@ rotation: {
   *viewport: the transform origin is the viewport center*
 
 #### Example
+
 ```js
 {
   transformOrigin: 'viewport'
@@ -212,6 +226,7 @@ rotation: {
   - **customClass** (`string`, default: `null`): *the class of the container*
 
 #### Example
+
 ```js
 {
   customClass: 'my-custom-class'
@@ -227,6 +242,7 @@ rotation: {
 #### Arguments
 
 The `bind()` method expects an `Object` containing:
+
 - **url** (required)
   - **type**: `String`
   - **description**: The url of the image to bind.
@@ -302,6 +318,7 @@ myImage.cropme('rotate', 90);
 #### Arguments
 
 As a parameter, the `crop()` function can receive:
+
 1. An `Object` containing:
   - **type**
     - **type**: `String`
@@ -329,7 +346,6 @@ As a parameter, the `crop()` function can receive:
 
   **\*** *For more information about `mimetype` and `quality` arguments, see \
   [MDN's HTMLCanvasElement.toBlob()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) doc.*
-
 
   2. A `String` specifying the exportation format (`base64` or `blob`)
 
@@ -433,10 +449,13 @@ myImage.cropme('destroy');
 ```
 
 ## Contributing
+
 Thank you for your contribution to this project.
 
 ### Installation
+
 Fork the project then
+
 ```
 npm install && npm run watch
 ```

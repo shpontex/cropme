@@ -2,7 +2,7 @@
   "name": "cropme",
   "version": "1.3.4",
   "description": "Javascript image cropper",
-  "main": "src/index.js",
+  "main": "dist/cropme.js",
   "scripts": {
     "build": "npm run build:js && npm run minify:js && npm run minify:css",
     "build:js": "rollup -c",
