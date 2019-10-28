@@ -1,11 +1,11 @@
 /*!
- * cropme v1.3.5
+ * cropme v1.4.0
  * https://shpontex.github.io/cropme
  *
  * Copyright 2019 shpontex
  * Released under the MIT license
  *
- * Date: 2019-10-28T02:16:32.255Z
+ * Date: 2019-10-28T07:32:22.943Z
  */
 
 (function (global, factory) {
@@ -1130,7 +1130,7 @@
               return resolve(URL.createObjectURL(blob));
             }, options.mimetype, options.quality);
           } else {
-            resolve(canvas.toDataURL());
+            resolve(canvas.toDataURL(options.mimetype, options.quality));
           }
         });
       }

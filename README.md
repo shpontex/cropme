@@ -320,7 +320,7 @@ myImage.cropme('rotate', 90);
 As a parameter, the `crop()` function can receive:
 
 1. An `Object` containing:
-  - **type**
+ - **type**
     - **type**: `String`
     - **default**: `base64`
     - **possible value**: `base64`, `blob`
@@ -333,21 +333,20 @@ As a parameter, the `crop()` function can receive:
     - **type**: `number`
     - **description**: The size of the ouput, relative to the original image size.\
     If `scale` has a value, the `width` get ignored.
-  - **mimetype***
+  - **mimetype**
     - **type**: `String`
     - **default**: `image/png`
-    - **description**: The output image format.\
-    (Only with `blob` type.)
-  - **quality***
+    - **description**: The output image format.
+  - **quality**
     - **type**: `number`
-    - **default**: `0.92` for `image/jpeg` mimetype, `0.80` for `image/webp` mimetype.
+    - **default**: `0.92` (`0.80` for `image/webp` mimetype when output is blob).
     - **description**: A Number between `0` and `1` indicating image quality.\
-    (Only with `blob` type, and with `image/jpeg` or `image/webp` mimetypes)
+    Works only with `image/jpeg` or `image/webp` (formats that use lossy
+    compression).
+2. A `String` specifying the exportation format (`base64` or `blob`)
 
-  **\*** *For more information about `mimetype` and `quality` arguments, see \
-  [MDN's HTMLCanvasElement.toBlob()](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob) doc.*
-
-  2. A `String` specifying the exportation format (`base64` or `blob`)
+  *For more information about `mimetype` and `quality` arguments: \
+  → [`toBlob()` and `toDataURL()` HTMLCanvasElement documentation](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement).*
 
 Calling `crop()` without parameters returns a **base64** image with the viewport size.
 
