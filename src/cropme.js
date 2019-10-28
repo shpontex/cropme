@@ -565,7 +565,11 @@
             options.quality
           )
         } else {
-          resolve(canvas.toDataURL(options.mimetype, options.quality))
+          if (typeof options === 'object') {
+            resolve(canvas.toDataURL(options.mimetype, options.quality))
+          } else {
+            resolve(canvas.toDataURL())
+          }
         }
       })
     }

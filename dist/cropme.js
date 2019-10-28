@@ -5,7 +5,7 @@
  * Copyright 2019 shpontex
  * Released under the MIT license
  *
- * Date: 2019-10-28T07:32:22.943Z
+ * Date: 2019-10-28T17:18:45.700Z
  */
 
 (function (global, factory) {
@@ -1130,7 +1130,11 @@
               return resolve(URL.createObjectURL(blob));
             }, options.mimetype, options.quality);
           } else {
-            resolve(canvas.toDataURL(options.mimetype, options.quality));
+            if (_typeof(options) === 'object') {
+              resolve(canvas.toDataURL(options.mimetype, options.quality));
+            } else {
+              resolve(canvas.toDataURL());
+            }
           }
         });
       }
