@@ -1,11 +1,11 @@
 /*!
- * cropme v1.3.4
+ * cropme v1.3.5
  * https://shpontex.github.io/cropme
  *
  * Copyright 2019 shpontex
  * Released under the MIT license
  *
- * Date: 2019-10-24T08:53:08.053Z
+ * Date: 2019-10-28T02:16:32.255Z
  */
 
 (function (global, factory) {
@@ -566,7 +566,7 @@
   }
 
   function transform() {
-    return 'translate(' + this.properties.x + 'px,' + this.properties.y + 'px) scale(' + this.properties.scale + ') rotate(' + this.properties.deg + 'deg)';
+    return 'translate3d(' + this.properties.x + 'px,' + this.properties.y + 'px, 0) scale(' + this.properties.scale + ') rotate(' + this.properties.deg + 'deg)';
   }
 
   function transformOrigin(x, y) {
@@ -648,7 +648,7 @@
 
       var diffH = (this.properties.container.offsetWidth - this.properties.container.offsetHeight) / 2;
       var positionY = this.properties.container.offsetHeight / 2 + 12 - diffH;
-      this.properties.sliderContainer.style.transform = 'translate(' + positionX + 'px, ' + positionY + 'px) rotate(-90deg)';
+      this.properties.sliderContainer.style.transform = 'translate3d(' + positionX + 'px, ' + positionY + 'px, 0) rotate(-90deg)';
       var sliderOrigin = this.properties.container.offsetWidth / 2;
       this.properties.sliderContainer.style.transformOrigin = sliderOrigin + 'px 12px';
       this.properties.sliderContainer.style.marginTop = '-24px';

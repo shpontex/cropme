@@ -34,7 +34,7 @@
   }
 
   function transform() {
-    return 'translate(' + this.properties.x + 'px,' + this.properties.y + 'px) scale(' + this.properties.scale + ') rotate(' + this.properties.deg + 'deg)'
+    return 'translate3d(' + this.properties.x + 'px,' + this.properties.y + 'px, 0) scale(' + this.properties.scale + ') rotate(' + this.properties.deg + 'deg)'
   }
 
   function transformOrigin(x, y) {
@@ -109,7 +109,7 @@
       }
       let diffH = (this.properties.container.offsetWidth - this.properties.container.offsetHeight) / 2
       const positionY = this.properties.container.offsetHeight / 2 + 12 - diffH
-      this.properties.sliderContainer.style.transform = 'translate(' + positionX + 'px, ' + positionY + 'px) rotate(-90deg)'
+      this.properties.sliderContainer.style.transform = 'translate3d(' + positionX + 'px, ' + positionY + 'px, 0) rotate(-90deg)'
       let sliderOrigin = this.properties.container.offsetWidth / 2
       this.properties.sliderContainer.style.transformOrigin = sliderOrigin + 'px 12px'
 
