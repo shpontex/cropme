@@ -142,6 +142,7 @@ container: {
 - Parameters:
   - **width** (`int`, default: `100`): *the viewport width*
   - **height** (`int`, default: `100`): *the viewport height*
+  - **type** (`string`, default: `square`, available: `circle`): *the viewport frame form*
   - **border** (`object`): *the viewport frame border*
     - **enable** (`bool`, default: `true`): *toggle the border*
     - **width** (`int`, default: `2`): *the border width*
@@ -153,6 +154,7 @@ container: {
 viewport: {
   width: 100,
   height: 100,
+  type: 'circle',
   border: {
     enable: true,
     width: 2,
