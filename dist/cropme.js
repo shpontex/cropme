@@ -1,11 +1,11 @@
 /*!
- * cropme v1.4.2
+ * cropme v1.4.3
  * https://shpontex.github.io/cropme
  *
- * Copyright 2019 shpontex
+ * Copyright 2020 shpontex
  * Released under the MIT license
  *
- * Date: 2019-11-12T07:19:06.916Z
+ * Date: 2020-03-02T12:55:13.295Z
  */
 
 (function (global, factory) {
@@ -1001,8 +1001,7 @@
       this.properties.wrapper = el;
 
       if (el.tagName.toLowerCase() === 'img') {
-        this.properties.image = new Image();
-        this.properties.image.src = el.src;
+        this.properties.image = el;
         this.properties.wrapper = document.createElement('div');
         el.parentNode.insertBefore(this.properties.wrapper, el.previousSibling);
         el.parentNode.removeChild(el);

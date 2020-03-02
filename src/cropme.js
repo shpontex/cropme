@@ -441,8 +441,7 @@
       }
       this.properties.wrapper = el
       if (el.tagName.toLowerCase() === 'img') {
-        this.properties.image = new Image()
-        this.properties.image.src = el.src
+        this.properties.image = el
         this.properties.wrapper = document.createElement('div')
         el.parentNode.insertBefore(this.properties.wrapper, el.previousSibling)
         el.parentNode.removeChild(el)
